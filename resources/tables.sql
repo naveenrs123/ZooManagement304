@@ -3,7 +3,7 @@ CREATE TABLE Zoo_Employee
     Employee_ID varchar(10),
     Name        varchar(100)  NOT NULL,
     Start_Date  date    NOT NULL,
-    On_Duty     boolean NOT NULL,
+    On_Duty     char(1) NOT NULL,
     Address     varchar(400),
     PRIMARY KEY (Employee_ID)
 );
@@ -21,9 +21,9 @@ CREATE TABLE Vet_Employee
 (
     Employee_ID    varchar(10),
     On_Call        char(1),
-    Experience     int NOT NULL,
+    Experience     number NOT NULL,
     Specialization varchar(30),
-    Phone_#: int,
+    Phone_Number number,
     PRIMARY KEY (Employee_ID),
     FOREIGN KEY (Employee_ID) REFERENCES Zoo_Employee (Employee_ID)
         ON DELETE CASCADE
@@ -33,36 +33,88 @@ CREATE TABLE Manager_Employee
 (
     Employee_ID varchar(10),
     In_Office   char(1),
-    Office_#    int,
+    Office_#    number,
     PRIMARY KEY (Employee_ID),
     FOREIGN KEY (Employee_ID) REFERENCES Zoo_Employee (Employee_ID)
         ON DELETE CASCADE
 );
 
+CREATE TABLE Area
+(
+    Area_ID char,
+    Num_Pens number NOT NULL,
+    Name    varchar(30) NOT NULL,
+    Type    varchar(20),
+    PRIMARY KEY (Area_ID)
+);
+
+CREATE TABLE AreaTypes
+(
+    Area_ID char,
+    Type    varchar(20),
+    PRIMARY KEY (Area_ID),
+    FOREIGN KEY (Area_ID) REFERENCES Area
+        ON DELETE CASCADE
+);
+
+CREATE TABLE PenHabitats
+(
+    Area_ID    char,
+    Pen_Number number,
+    Habitat    varchar(30),
+    PRIMARY KEY (Area_ID, Pen_Number),
+    FOREIGN KEY (Area_ID) REFERENCES Area
+);
+
+CREATE TABLE PenInfo
+(
+    Pen_Number                number,
+    Area_ID               char,
+    Description           varchar(300),
+    PenSize                number NOT NULL,
+    Occupancy             number,
+    Date_of_Last_Cleaning Date,
+    PRIMARY KEY (Pen_Number, Area_ID),
+    FOREIGN KEY (Area_ID) REFERENCES Area
+        ON DELETE CASCADE
+);
 
 CREATE TABLE Pen_Cleaning
 (
     Employee_ID      varchar(10),
-    Number           int,
+    Pen_Number           number,
     Area_ID          char(1),
     Date_of_cleaning date NOT NULL,
-    PRIMARY KEY (Employee_ID, Number, Area_ID),
+    PRIMARY KEY (Employee_ID, Pen_Number, Area_ID),
     FOREIGN KEY (Employee_ID) REFERENCES Zookeeper_Employee (Employee_ID),
-    FOREIGN KEY (Number, Area_ID) REFERENCES PenInfo
+    FOREIGN KEY (Pen_Number, Area_ID) REFERENCES PenInfo
         ON DELETE CASCADE
 );
 
+CREATE TABLE Animals
+(
+    Animal_ID  varchar(10),
+    Type       varchar(20) NOT NULL,
+    Sex        char(1),
+    Species    varchar(30) NOT NULL,
+    Age        number  NOT NULL,
+    Name       varchar(30) NOT NULL,
+    Pen_Number number,
+    Area_ID    char,
+    PRIMARY KEY (Animal_ID),
+    FOREIGN KEY (Pen_Number, Area_ID) REFERENCES PenInfo
+);
 
 CREATE TABLE Health_Checkup
 (
     Checkup_ID    varchar(10),
     Employee_ID   varchar(10),
     Animal_ID     varchar(10),
-    Weight        int  NOT NULL,
+    Weight        number  NOT NULL,
     Health_Status varchar(10) NOT NULL,
     Medication    varchar(500),
     Comments      varchar(1000),
-    Date          date NOT NULL,
+    CheckupDate          date NOT NULL,
     PRIMARY KEY (Checkup_ID),
     FOREIGN KEY (Employee_ID) REFERENCES Vet_Employee
         ON DELETE SET NULL,
@@ -75,11 +127,11 @@ CREATE TABLE Animal_Relocation
     Relocation_ID varchar(10),
     Employee_ID   varchar(10),
     Animal_ID     varchar(10),
-    from_Pen_ID   int,
+    from_Pen_ID   number,
     from_Area_ID  char(1),
-    to_Pen_ID     int,
+    to_Pen_ID     number,
     to_Area_ID    char(1),
-    Date          date NOT NULL,
+    RelocationDate          date NOT NULL,
     PRIMARY KEY (Relocation_ID),
     FOREIGN KEY (Employee_ID) REFERENCES Manager_Employee (Employee_ID)
         ON DELETE SET NULL,
@@ -94,7 +146,7 @@ CREATE TABLE Food
 (
     Food_ID          varchar(10),
     Type             varchar(20) NOT NULL,
-    Inventory_Amount int,
+    Inventory_Amount number,
     PRIMARY KEY (Food_ID)
 );
 
@@ -104,7 +156,7 @@ CREATE TABLE Feeding
     Food_ID              varchar(10),
     Animal_ID            varchar(10),
     Employee_ID          varchar(10),
-    Amount               int      NOT NULL,
+    Amount               number      NOT NULL,
     Date_Time_Of_Feeding timestamp NOT NULL,
     PRIMARY KEY (Food_ID, Animal_ID, Employee_ID),
     FOREIGN KEY (Food_ID) REFERENCES Food,
@@ -126,8 +178,8 @@ CREATE TABLE Visitor
 CREATE TABLE Donation
 (
     Donation_ID varchar(10),
-    Date        date,
-    Amount      int,
+    DonationDate        date,
+    Amount      number,
     Status      varchar(20),
     PRIMARY KEY (Donation_ID)
 );
@@ -144,6 +196,32 @@ CREATE TABLE Donation_Approval
         ON DELETE SET NULL,
     FOREIGN KEY (Employee_ID) REFERENCES Manager_Employee
         ON DELETE SET NULL
+);
+
+CREATE TABLE EventPrices
+(
+    Type   varchar(20),
+    Ticket_Price number NOT NULL,
+    PRIMARY KEY (Type)
+);
+
+CREATE TABLE EventTypes
+(
+    Name varchar(30),
+    Type varchar(20),
+    PRIMARY KEY (Name),
+    FOREIGN KEY (Type) REFERENCES EventPrices
+        ON DELETE SET NULL
+);
+
+CREATE TABLE EventInfo (
+    Event_ID varchar(10),
+    Name varchar(30),
+    StartDate date,
+    EndDate date,
+    Capacity number,
+    PRIMARY KEY (Event_ID),
+    FOREIGN KEY (Name) REFERENCES EventTypes
 );
 
 CREATE TABLE Event_Attendance
@@ -169,91 +247,9 @@ CREATE TABLE Event_Feature
         ON DELETE SET NULL
 );
 
-CREATE TABLE EventPrices
-(
-    Type   varchar(20),
-    Ticket_Price int NOT NULL,
-    PRIMARY KEY (Type)
-);
-
-CREATE TABLE EventTypes
-(
-    Name varchar(30),
-    Type varchar(20),
-    PRIMARY KEY (Name),
-    FOREIGN KEY (Type) REFERENCES EventPrices
-        ON DELETE SET NULL
-);
-
-CREATE TABLE EventInfo (
-	Event_ID varchar(10),
-	Name varchar(30),
-	Start date,
-	End date,
-	Capacity int,
-	PRIMARY KEY (Event_ID),
-	FOREIGN KEY (Name) REFERENCES EventTypes
-);
-
-CREATE TABLE AreaTypes
-(
-    Area_ID char,
-    Type    varchar(20),
-    PRIMARY KEY (Area_ID),
-    FOREIGN KEY (Area_ID) REFERENCES Area
-        ON DELETE CASCADE
-);
-
-CREATE TABLE PenInfo
-(
-    Number                int,
-    Area_ID               char,
-    Description           varchar(300),
-    Size                  int NOT NULL,
-    Occupancy             int,
-    Date_of_Last_Cleaning Date,
-    PRIMARY KEY (Number, Area_ID),
-    FOREIGN KEY (Area_ID) REFERENCES Area
-        ON DELETE CASCADE
-);
-
-CREATE TABLE Area
-(
-    Area_ID char, 
-    Num_Pens int NOT NULL,
-    Name    varchar(30) NOT NULL,
-    Type    varchar(20),
-    PRIMARY KEY (Area_ID)
-);
-
 CREATE TABLE FoodPreferences
 (
     Species   varchar(30),
     Food_Type varchar(20) NOT NULL,
     PRIMARY KEY (Food_Type)
 );
-
-CREATE TABLE PenHabitats
-(
-    Area_ID    char,
-    Pen_Number int,
-    Habitat    varchar(30),
-    PRIMARY KEY (Area_ID, Pen_Number),
-    FOREIGN KEY (Area_ID) REFERENCES Area
-);
-
-CREATE TABLE Animals
-(
-    Animal_ID  varchar(10),
-    Type       varchar(20) NOT NULL,
-    Sex        char(1),
-    Species    varchar(30) NOT NULL,
-    Age        int  NOT NULL,
-    Name       varchar(30) NOT NULL,
-    Pen_Number int,
-    Area_ID    char,
-    PRIMARY KEY (Animal_ID),
-    FOREIGN KEY (Pen_Number, Area_ID) REFERENCES PenInfo
-);
-
-
