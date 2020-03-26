@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import zoo.delegates.TerminalTransactionsDelegate;
-import zoo.model.BranchModel;
 
 /**
  * The class is only responsible for handling terminal text inputs. 

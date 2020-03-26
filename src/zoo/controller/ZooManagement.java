@@ -3,7 +3,6 @@ package zoo.controller;
 import zoo.database.DatabaseConnectionHandler;
 import zoo.delegates.LoginWindowDelegate;
 import zoo.delegates.TerminalTransactionsDelegate;
-import zoo.model.BranchModel;
 import zoo.ui.LoginWindow;
 import zoo.ui.TerminalTransactions;
 

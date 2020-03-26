@@ -48,15 +48,6 @@ CREATE TABLE Area
     PRIMARY KEY (Area_ID)
 );
 
-CREATE TABLE AreaTypes
-(
-    Area_ID char,
-    Type    varchar(20),
-    PRIMARY KEY (Area_ID),
-    FOREIGN KEY (Area_ID) REFERENCES Area
-        ON DELETE CASCADE
-);
-
 CREATE TABLE PenHabitats
 (
     Area_ID    char,
