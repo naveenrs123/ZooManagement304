@@ -3,7 +3,7 @@ CREATE TABLE Zoo_Employee
     Employee_ID varchar(10),
     Name        varchar(100)  NOT NULL,
     Start_Date  date    NOT NULL,
-    On_Duty     char(1) NOT NULL,
+    On_Duty     char(1) NOT  ,
     Address     varchar(400),
     PRIMARY KEY (Employee_ID)
 );
