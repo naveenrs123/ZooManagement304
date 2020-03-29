@@ -2,18 +2,19 @@ package zoo.controller;
 
 import zoo.database.DatabaseConnectionHandler;
 import zoo.delegates.LoginWindowDelegate;
-import zoo.delegates.TerminalTransactionsDelegate;
+import zoo.delegates.WelcomeWindowDelegate;
 import zoo.ui.LoginWindow;
-import zoo.ui.TerminalTransactions;
+import zoo.ui.WelcomeWindow;
 
 import java.sql.SQLException;
 
 /**
  * This is the main controller class that will orchestrate everything.
  */
-public class ZooManagement implements LoginWindowDelegate, TerminalTransactionsDelegate {
+public class ZooManagement implements LoginWindowDelegate, WelcomeWindowDelegate {
 	private DatabaseConnectionHandler dbHandler = null;
 	private LoginWindow loginWindow = null;
+	private WelcomeWindow welcomeWindow = null;
 
 	public ZooManagement() {
 		dbHandler = new DatabaseConnectionHandler();
@@ -22,6 +23,7 @@ public class ZooManagement implements LoginWindowDelegate, TerminalTransactionsD
 	private void start() {
 		loginWindow = new LoginWindow();
 		loginWindow.showFrame(this);
+		welcomeWindow = new WelcomeWindow();
 	}
 	
 	/**
@@ -35,9 +37,8 @@ public class ZooManagement implements LoginWindowDelegate, TerminalTransactionsD
 		if (didConnect) {
 			// Once connected, remove login window and start text transaction flow
 			loginWindow.dispose();
+			welcomeWindow.showFrame();
 
-			TerminalTransactions transaction = new TerminalTransactions();
-			transaction.showMainMenu(this);
 		} else {
 			loginWindow.handleLoginFailed();
 
@@ -55,7 +56,7 @@ public class ZooManagement implements LoginWindowDelegate, TerminalTransactionsD
      * The TerminalTransaction instance tells us that it is done with what it's 
      * doing so we are cleaning up the connection since it's no longer needed.
      */ 
-    public void terminalTransactionsFinished() {
+    public void finished() {
     	dbHandler.close();
     	dbHandler = null;
 
