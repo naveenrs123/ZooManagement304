@@ -3,6 +3,7 @@ CREATE TABLE ZooEmployee
     Employee_ID varchar(6),
     Name        varchar(100)  NOT NULL,
     Start_Date  date    NOT NULL,
+    End_Date    date,
     On_Duty     char(1) NOT NULL,
     PRIMARY KEY (Employee_ID)
 );
@@ -13,7 +14,6 @@ CREATE TABLE ZookeeperEmployee
     Event_Duty  char(1),
     PRIMARY KEY (Employee_ID),
     FOREIGN KEY (Employee_ID) REFERENCES ZooEmployee
-        ON DELETE CASCADE
 );
 
 CREATE TABLE VetEmployee
@@ -23,9 +23,9 @@ CREATE TABLE VetEmployee
     Experience     number NOT NULL,
     Specialization varchar(30),
     Phone_Number   varchar(12),
+
     PRIMARY KEY (Employee_ID),
     FOREIGN KEY (Employee_ID) REFERENCES ZooEmployee (Employee_ID)
-        ON DELETE CASCADE
 );
 
 CREATE TABLE ManagerEmployee
@@ -35,7 +35,6 @@ CREATE TABLE ManagerEmployee
     Office_#    number,
     PRIMARY KEY (Employee_ID),
     FOREIGN KEY (Employee_ID) REFERENCES ZooEmployee (Employee_ID)
-        ON DELETE CASCADE
 );
 
 CREATE TABLE Area
@@ -103,8 +102,7 @@ CREATE TABLE HealthCheckup
     Health_Status varchar(10) NOT NULL,
     CheckupDate          date NOT NULL,
     PRIMARY KEY (Checkup_ID),
-    FOREIGN KEY (Employee_ID) REFERENCES VetEmployee (Employee_ID)
-        ON DELETE SET NULL,
+    FOREIGN KEY (Employee_ID) REFERENCES VetEmployee (Employee_ID),
     FOREIGN KEY (Animal_ID) REFERENCES Animals
         ON DELETE CASCADE
 );
@@ -120,10 +118,9 @@ CREATE TABLE AnimalRelocation
     to_Area_ID    char(1),
     RelocationDate          date NOT NULL,
     PRIMARY KEY (Relocation_ID),
-    FOREIGN KEY (Employee_ID) REFERENCES ManagerEmployee (Employee_ID)
-        ON DELETE SET NULL,
+    FOREIGN KEY (Employee_ID) REFERENCES ManagerEmployee (Employee_ID),
     FOREIGN KEY (Animal_ID) REFERENCES Animals
-        ON DELETE SET NULL,
+        ON DELETE CASCADE,
     FOREIGN KEY (from_Pen_ID, from_Area_ID) REFERENCES PenInfo,
     FOREIGN KEY (to_Pen_ID, to_Area_ID) REFERENCES PenInfo
 );
@@ -155,99 +152,9 @@ CREATE TABLE Feeding
     FOREIGN KEY (Animal_ID) REFERENCES Animals
         ON DELETE CASCADE,
     FOREIGN KEY (Employee_ID) REFERENCES ZookeeperEmployee
-        ON DELETE SET NULL
-);
-
-CREATE TABLE Visitor
-(
-    Visitor_ID      varchar(6),
-    Name            varchar(50) NOT NULL,
-    Email           varchar(100) NOT NULL,
-    Last_Visit_Date date,
-    PRIMARY KEY (Visitor_ID)
-);
-
-CREATE TABLE Donation
-(
-    Donation_ID varchar(6),
-    DonationDate        date,
-    Amount      number,
-    Status      varchar(20),
-    PRIMARY KEY (Donation_ID)
-);
-
-CREATE TABLE DonationApproval
-(
-    Donation_ID   varchar(6),
-    Employee_ID   varchar(6),
-    Visitor_ID    varchar(6),
-    Approval_Date timestamp,
-    PRIMARY KEY (Donation_ID, Employee_ID, Visitor_ID),
-    FOREIGN KEY (Donation_ID) REFERENCES Donation,
-    FOREIGN KEY (Visitor_ID) REFERENCES Visitor
-        ON DELETE SET NULL,
-    FOREIGN KEY (Employee_ID) REFERENCES ManagerEmployee
-        ON DELETE SET NULL
-);
-
-CREATE TABLE EventPrices
-(
-    Type   varchar(6),
-    Ticket_Price number NOT NULL,
-    PRIMARY KEY (Type)
-);
-
-CREATE TABLE EventTypes
-(
-    Name varchar(30),
-    Type varchar(20),
-    PRIMARY KEY (Name),
-    FOREIGN KEY (Type) REFERENCES EventPrices
-        ON DELETE SET NULL
-);
-
-CREATE TABLE EventInfo (
-    Event_ID varchar(6),
-    Name varchar(30),
-    StartDate date,
-    EndDate date,
-    Capacity number,
-    PRIMARY KEY (Event_ID),
-    FOREIGN KEY (Name) REFERENCES EventTypes
-);
-
-CREATE TABLE EventAttendance
-(
-    Visitor_ID varchar(6),
-    Event_ID   varchar(6),
-    PRIMARY KEY (Visitor_ID, Event_ID),
-    FOREIGN KEY (Visitor_ID) REFERENCES Visitor
-        ON DELETE SET NULL,
-    FOREIGN KEY (Event_ID) REFERENCES EventInfo
-);
-
-CREATE TABLE EventFeature
-(
-    Event_ID    varchar(6),
-    Animal_ID   varchar(6),
-    Employee_ID varchar(6),
-    PRIMARY KEY (Event_ID, Animal_ID, Employee_ID),
-    FOREIGN KEY (Event_ID) REFERENCES EventInfo,
-    FOREIGN KEY (Animal_ID) REFERENCES Animals
-        ON DELETE SET NULL,
-    FOREIGN KEY (Employee_ID) REFERENCES ZookeeperEmployee
-        ON DELETE SET NULL
 );
 
 /*
-DROP TABLE EVENTFEATURE;
-DROP TABLE EVENTATTENDANCE;
-DROP TABLE EVENTINFO;
-DROP TABLE EVENTTYPES;
-DROP TABLE EVENTPRICES;
-DROP TABLE DONATIONAPPROVAL;
-DROP TABLE DONATION;
-DROP TABLE VISITOR;
 DROP TABLE FEEDING;
 DROP TABLE FOODPREFERENCES;
 DROP TABLE FOOD;

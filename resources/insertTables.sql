@@ -1,18 +1,18 @@
-INSERT INTO ZooEmployee VALUES ('E1', 'John', '2020-02-19', 'F');
-INSERT INTO ZooEmployee VALUES ('E2', 'Deere', '2020-02-18', 'F');
-INSERT INTO ZooEmployee VALUES ('E3', 'Matt', '2020-02-19', 'T');
-INSERT INTO ZooEmployee VALUES ('E4', 'Scarlett', '2020-02-19', 'T');
-INSERT INTO ZooEmployee VALUES ('E5', 'Colin', '2020-02-17', 'T');
-INSERT INTO ZooEmployee VALUES ('E6', 'Jeff', '2020-02-18', 'F');
-INSERT INTO ZooEmployee VALUES ('E7', 'Dakota', '2020-02-16', 'F');
-INSERT INTO ZooEmployee VALUES ('E8', 'Mark', '2020-02-15', 'T');
-INSERT INTO ZooEmployee VALUES ('E9', 'Saoirse', '2020-02-12', 'T');
-INSERT INTO ZooEmployee VALUES ('E10', 'Cody', '2020-02-14', 'T');
-INSERT INTO ZooEmployee VALUES ('E11', 'Jack', '2020-02-13', 'F');
-INSERT INTO ZooEmployee VALUES ('E12', 'Dan', '2020-02-19', 'F');
-INSERT INTO ZooEmployee VALUES ('E13', 'Michelle', '2020-02-14', 'T');
-INSERT INTO ZooEmployee VALUES ('E14', 'Sally', '2020-02-16', 'T');
-INSERT INTO ZooEmployee VALUES ('E15', 'Cody', '2020-02-20', 'T');
+INSERT INTO ZooEmployee VALUES ('E1', 'John', '2016-02-19', '2018-02-19', 'F');
+INSERT INTO ZooEmployee VALUES ('E2', 'Deere', '2017-02-18', '2019-02-18', 'F');
+INSERT INTO ZooEmployee VALUES ('E3', 'Matt', '2018-02-19', '2019-02-19', 'T');
+INSERT INTO ZooEmployee VALUES ('E4', 'Scarlett', '2018-02-19', '2019-04-20', 'T');
+INSERT INTO ZooEmployee VALUES ('E5', 'Colin', '2019-02-17', '2020-02-17', 'T');
+INSERT INTO ZooEmployee VALUES ('E6', 'Jeff', '2020-02-18', NULL, 'F');
+INSERT INTO ZooEmployee VALUES ('E7', 'Dakota', '2020-02-16', NULL, 'F');
+INSERT INTO ZooEmployee VALUES ('E8', 'Mark', '2020-02-15', NULL,  'T');
+INSERT INTO ZooEmployee VALUES ('E9', 'Saoirse', '2020-02-12', NULL, 'T');
+INSERT INTO ZooEmployee VALUES ('E10', 'Cody', '2020-02-14', NULL, 'T');
+INSERT INTO ZooEmployee VALUES ('E11', 'Jack', '2020-02-13', NULL, 'F');
+INSERT INTO ZooEmployee VALUES ('E12', 'Dan', '2020-02-19', NULL, 'F');
+INSERT INTO ZooEmployee VALUES ('E13', 'Michelle', '2020-02-14', NULL, 'T');
+INSERT INTO ZooEmployee VALUES ('E14', 'Sally', '2020-02-16', NULL, 'T');
+INSERT INTO ZooEmployee VALUES ('E15', 'Cody', '2020-02-20', NULL, 'T');
 
 INSERT INTO ZookeeperEmployee VALUES ('E1', 'F');
 INSERT INTO ZookeeperEmployee VALUES ('E2', 'F');
@@ -102,45 +102,3 @@ INSERT INTO Feeding VALUES ('F6', 'A3', 'E4', 23, '2020-03-26 19:32:00');
 INSERT INTO Feeding VALUES ('F2', 'A5', 'E5', 222, '2020-03-25 19:33:06');
 INSERT INTO Feeding VALUES ('F2', 'A4', 'E1', 100, '2020-03-23 19:33:24');
 INSERT INTO Feeding VALUES ('F7', 'A6', 'E2', 8, '2020-03-24 19:34:30');
-
-INSERT INTO Visitor VALUES ('V1', 'Elon Musk', 'elon@elonmusk.com', '2020-02-22');
-INSERT INTO Visitor VALUES ('V2', 'Frodo Baggins', 'frodo@theshire.co.nz', '2020-01-25');
-INSERT INTO Visitor VALUES ('V3', 'Bernie Sanders', 'bernie@feelthebern.com', NULL);
-INSERT INTO Visitor VALUES ('V4', 'Janis McKenna', 'janis@physics.ubc.ca', '2019-05-04');
-INSERT INTO Visitor VALUES ('V5', 'Hazra Imran', 'hazra@cs.ubc.ca', '2020-02-09');
-
-INSERT INTO Donation VALUES ('D1', '2020-02-08', 4000, 'Pending');
-INSERT INTO Donation VALUES ('D2', '2019-04-09', 50, 'Approved');
-INSERT INTO Donation VALUES ('D3', '2019-09-14', 1000, 'Pending');
-INSERT INTO Donation VALUES ('D4', '2019-12-05', 35, 'Approved');
-INSERT INTO Donation VALUES ('D5', '2020-02-27', 66, 'Pending');
-
-INSERT INTO DonationApproval VALUES ('D1', 'E11', 'V1', '2020-02-09');
-INSERT INTO DonationApproval VALUES ('D2', 'E11', 'V2', '2019-05-10');
-INSERT INTO DonationApproval VALUES ('D3', 'E12', 'V2', '2019-09-26');
-INSERT INTO DonationApproval VALUES ('D4', 'E13', 'V3', '2019-06-12');
-INSERT INTO DonationApproval VALUES ('D5', 'E14', 'V5', '2020-03-01');
-
-INSERT INTO EventPrices VALUES ('Common', 10);
-INSERT INTO EventPrices VALUES ('Free', 0);
-INSERT INTO EventPrices VALUES ('Kids', 1);
-INSERT INTO EventPrices VALUES ('Adults', 33);
-INSERT INTO EventPrices VALUES ('Special', 7.50);
-
-INSERT INTO EventInfo VALUES ('EV1', 'Amphibian Show', '2020-02-27', '2020-03-05', 10);
-INSERT INTO EventInfo VALUES ('EV2', 'Feed a Herbivore', '2020-01-22', '2020-02-28', 80);
-INSERT INTO EventInfo VALUES ('EV3', 'Dog Show', '2019-09-27', '2020-02-28', 150);
-INSERT INTO EventInfo VALUES ('EV4', 'Omnivore Show', '2020-09-27', '2020-10-10', 100);
-INSERT INTO EventInfo VALUES ('EV5', 'Pet the Horse', '2020-02-27', '2020-03-05', 50);
-
-INSERT INTO EventAttendance VALUES ('V1', 'EV1');
-INSERT INTO EventAttendance VALUES ('V2', 'EV1');
-INSERT INTO EventAttendance VALUES ('V3', 'EV2');
-INSERT INTO EventAttendance VALUES ('V4', 'EV2');
-INSERT INTO EventAttendance VALUES ('V5', 'EV1');
-
-INSERT INTO EventFeature VALUES ('EV1', 'A1', 'E1');
-INSERT INTO EventFeature VALUES ('EV2', 'A1', 'E2');
-INSERT INTO EventFeature VALUES ('EV3', 'A2', 'E4');
-INSERT INTO EventFeature VALUES ('EV4', 'A2', 'E3');
-INSERT INTO EventFeature VALUES ('EV5', 'A1', 'E5');
