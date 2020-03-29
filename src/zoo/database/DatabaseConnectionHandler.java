@@ -1,7 +1,6 @@
 package zoo.database;
 
-import zoo.model.AnimalModel;
-import zoo.model.EventInfoModel;
+import zoo.model.*;
 
 import java.sql.*;
 
@@ -91,14 +90,14 @@ public class DatabaseConnectionHandler {
 		}
 	}
 
-	public void insertEvent(EventInfoModel model) {
+	public void insertEmployee(ZooEmployeeModel model) {
 		try {
 			PreparedStatement ps = connection.prepareStatement("INSERT INTO EVENTINFO VALUES (?,?,?,?,?)");
-			ps.setString(1, model.getEventID());
+			ps.setString(1, model.getEmployee_ID());
 			ps.setString(2, model.getName());
 			ps.setDate(3, model.getStartDate());
-			ps.setDate(4, model.getEndDate());
-			ps.setInt(5, model.getCapacity());
+			ps.setObject(4, model.getOnDuty(), Types.CHAR);
+			ps.setString(5, model.getAddress());
 
 			ps.executeUpdate();
 			connection.commit();
@@ -109,6 +108,30 @@ public class DatabaseConnectionHandler {
 			rollbackConnection();
 		}
 	}
+
+	public void insertHealthCheckup(HealthCheckupModel model) {
+		try {
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO EVENTINFO VALUES (?,?,?,?,?)");
+			ps.setString(1, model.getCheckupID());
+			ps.setString(2, model.getAnimalID());
+			ps.setInt(3, model.getWeight());
+			ps.setString(4, model.getHealthStatus());
+			ps.setString(5, model.getMedication());
+			ps.setString(6, model.getMedication());
+			ps.setDate(5, model.getCheckupDate());
+
+			ps.executeUpdate();
+			connection.commit();
+
+			ps.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+	}
+
+	
+
 
 	private void rollbackConnection() {
 		try  {
