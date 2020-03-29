@@ -9,9 +9,19 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class WelcomeWindow extends JFrame implements ActionListener {
+    AnimalWindow animalWindow;
+    EmployeeWindow employeeWindow;
+    FoodWindow foodWindow;
+    HealthCheckupWindow healthCheckupWindow;
+    AreaPensWindow areaPensWindow;
 
     public WelcomeWindow() {
         super("Zoo Management Portal");
+        animalWindow = new AnimalWindow();
+        employeeWindow = new EmployeeWindow();
+        foodWindow = new FoodWindow();
+        healthCheckupWindow = new HealthCheckupWindow();
+        areaPensWindow = new AreaPensWindow();
     }
 
     public void showFrame() {
@@ -22,12 +32,6 @@ public class WelcomeWindow extends JFrame implements ActionListener {
 
         this.setSize(900, 190);
         this.setResizable(false);
-        this.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-
-            }
-        });
 
         JPanel titlePane = new JPanel();
         titlePane.setLayout(new BoxLayout(titlePane, BoxLayout.LINE_AXIS));
@@ -52,10 +56,40 @@ public class WelcomeWindow extends JFrame implements ActionListener {
         buttonPane.setPreferredSize(new Dimension(1200, 20));
         buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
         JButton animals = new JButton("Animals");
+        animals.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showAnimalsPane();
+            }
+        });
         JButton employees = new JButton("Employees");
+        employees.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showEmployeesPane();
+            }
+        });
         JButton food = new JButton("Food and Feedings");
+        food.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showFoodPane();
+            }
+        });
         JButton healthCheckups = new JButton("Health Checkups");
+        healthCheckups.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showHealthCheckupPane();
+            }
+        });
         JButton areasPens = new JButton("Areas and Pens");
+        areasPens.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showAreaPensPane();
+            }
+        });
 
         buttonPane.add(animals);
         buttonPane.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -76,23 +110,23 @@ public class WelcomeWindow extends JFrame implements ActionListener {
     }
 
     public void showAnimalsPane() {
-
+        animalWindow.showFrame();
     }
 
     public void showEmployeesPane() {
-
+        employeeWindow.showFrame();
     }
 
     public void showFoodPane() {
-
+        foodWindow.showFrame();
     }
 
     public void showHealthCheckupPane() {
-
+        healthCheckupWindow.showFrame();
     }
 
     public void showAreaPensPane() {
-
+        areaPensWindow.showFrame();
     }
 
     @Override
