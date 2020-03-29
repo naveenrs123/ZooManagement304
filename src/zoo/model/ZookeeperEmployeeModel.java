@@ -1,6 +1,6 @@
 package zoo.model;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class ZookeeperEmployeeModel extends ZooEmployeeModel {
 
