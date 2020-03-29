@@ -38,6 +38,11 @@ public class ZooManagement implements LoginWindowDelegate, WelcomeWindowDelegate
 			// Once connected, remove login window and start text transaction flow
 			loginWindow.dispose();
 			welcomeWindow.showFrame();
+			try{
+				dbHandler.updateAnimal();
+			} catch (SQLException e) {
+				System.out.println("yeet");
+			}
 
 		} else {
 			loginWindow.handleLoginFailed();

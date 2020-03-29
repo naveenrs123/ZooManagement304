@@ -4,9 +4,9 @@ import zoo.model.AnimalModel;
 import zoo.model.FoodModel;
 
 import javax.swing.*;
-import javax.xml.transform.Result;
 import java.awt.*;
 import java.sql.*;
+import java.util.Vector;
 
 /**
  * This class handles all database related transactions
@@ -78,13 +78,23 @@ public class DatabaseConnectionHandler {
 
 	public void updateAnimal() throws SQLException {
 		ResultSet animals = getAnimalTuples();
-		String[] animalPairs = new String[animals.getFetchSize()];
-
-
+		System.out.println(animals);
+		Vector<String> animalPairs = new Vector<>();
+		while (animals.next()) {
+			String idName = "(" + animals.getString(1) + ", " + animals.getString(6) + ")";
+			System.out.println(idName);
+			animalPairs.add(idName);
+		}
+		/*
+		JFrame frame = new JFrame();
+		frame.setSize(300, 300);
 		JPanel panel = new JPanel(new GridLayout(0,1));
 		panel.add(new JLabel("Which animal would you like to modify?"));
-		JComboBox boi = new JComboBox();
+		JComboBox<String> boi = new JComboBox<>(animalPairs);
 		panel.add(boi);
+		frame.add(panel);
+		frame.setVisible(true);
+		*/
 	}
 
 	// called when a user wants to "delete" an employee, by supplying the date they left the zoo
@@ -164,9 +174,7 @@ public class DatabaseConnectionHandler {
 	private ResultSet getAnimalTuples(){
 		try {
 			PreparedStatement ps = connection.prepareStatement("SELECT * from animals");
-			System.out.println("yote");
-			ResultSet result = ps.executeQuery();
-			return result;
+			return ps.executeQuery();
 		} catch (SQLException e) {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 			rollbackConnection();
