@@ -3,6 +3,7 @@ CREATE TABLE ZooEmployee
     Employee_ID varchar(6),
     Name        varchar(100)  NOT NULL,
     Start_Date  date    NOT NULL,
+    End_Date    date,
     On_Duty     char(1) NOT NULL,
     PRIMARY KEY (Employee_ID)
 );
@@ -13,7 +14,6 @@ CREATE TABLE ZookeeperEmployee
     Event_Duty  char(1),
     PRIMARY KEY (Employee_ID),
     FOREIGN KEY (Employee_ID) REFERENCES ZooEmployee
-        ON DELETE CASCADE
 );
 
 CREATE TABLE VetEmployee
@@ -23,9 +23,9 @@ CREATE TABLE VetEmployee
     Experience     number NOT NULL,
     Specialization varchar(30),
     Phone_Number   varchar(12),
+
     PRIMARY KEY (Employee_ID),
     FOREIGN KEY (Employee_ID) REFERENCES ZooEmployee (Employee_ID)
-        ON DELETE CASCADE
 );
 
 CREATE TABLE ManagerEmployee
@@ -35,7 +35,6 @@ CREATE TABLE ManagerEmployee
     Office_#    number,
     PRIMARY KEY (Employee_ID),
     FOREIGN KEY (Employee_ID) REFERENCES ZooEmployee (Employee_ID)
-        ON DELETE CASCADE
 );
 
 CREATE TABLE Area
@@ -103,8 +102,7 @@ CREATE TABLE HealthCheckup
     Health_Status varchar(10) NOT NULL,
     CheckupDate          date NOT NULL,
     PRIMARY KEY (Checkup_ID),
-    FOREIGN KEY (Employee_ID) REFERENCES VetEmployee (Employee_ID)
-        ON DELETE SET NULL,
+    FOREIGN KEY (Employee_ID) REFERENCES VetEmployee (Employee_ID),
     FOREIGN KEY (Animal_ID) REFERENCES Animals
         ON DELETE CASCADE
 );
@@ -120,10 +118,9 @@ CREATE TABLE AnimalRelocation
     to_Area_ID    char(1),
     RelocationDate          date NOT NULL,
     PRIMARY KEY (Relocation_ID),
-    FOREIGN KEY (Employee_ID) REFERENCES ManagerEmployee (Employee_ID)
-        ON DELETE SET NULL,
+    FOREIGN KEY (Employee_ID) REFERENCES ManagerEmployee (Employee_ID),
     FOREIGN KEY (Animal_ID) REFERENCES Animals
-        ON DELETE SET NULL,
+        ON DELETE CASCADE,
     FOREIGN KEY (from_Pen_ID, from_Area_ID) REFERENCES PenInfo,
     FOREIGN KEY (to_Pen_ID, to_Area_ID) REFERENCES PenInfo
 );
@@ -155,7 +152,6 @@ CREATE TABLE Feeding
     FOREIGN KEY (Animal_ID) REFERENCES Animals
         ON DELETE CASCADE,
     FOREIGN KEY (Employee_ID) REFERENCES ZookeeperEmployee
-        ON DELETE SET NULL
 );
 
 /*
