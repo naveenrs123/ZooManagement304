@@ -12,5 +12,6 @@ public enum Species {
     GORILLA,
     CHEETAH,
     KOALA,
-    FLAMINGO
+    FLAMINGO,
+    CHAMELEON
 }

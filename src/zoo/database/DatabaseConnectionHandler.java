@@ -1,8 +1,10 @@
 package zoo.database;
 
 import zoo.model.AnimalModel;
-import zoo.model.EventInfoModel;
+import zoo.model.FoodModel;
 
+import javax.swing.*;
+import java.awt.*;
 import java.sql.*;
 
 /**
@@ -73,6 +75,29 @@ public class DatabaseConnectionHandler {
 		}
 	}
 
+	public void updateAnimal() {
+		JPanel panel = new JPanel(new GridLayout(0,1));
+		panel.add(new JLabel("Which animal would you like to modify?"));
+		JComboBox boi = new JComboBox();
+		panel.add(boi);
+	}
+
+	// called when a user wants to "delete" an employee, by supplying the date they left the zoo
+	public void deleteZooEmployee(String ID, Date endDate) {
+		try {
+			PreparedStatement ps = connection.prepareStatement("UPDATE zooemployee SET END_DATE = ? WHERE employee_id = ?");
+			ps.setDate(1, endDate);
+			ps.setString(2, ID);
+			ps.executeUpdate();
+			connection.commit();
+			ps.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+	}
+
+
 	public void deleteAnimal(int animalID) {
 		try {
 			PreparedStatement ps = connection.prepareStatement("DELETE FROM animals WHERE animal_id = ?");
@@ -91,18 +116,30 @@ public class DatabaseConnectionHandler {
 		}
 	}
 
-	public void insertEvent(EventInfoModel model) {
+	// INSERT new food into food table
+	public void insertFood(FoodModel food) {
 		try {
-			PreparedStatement ps = connection.prepareStatement("INSERT INTO EVENTINFO VALUES (?,?,?,?,?)");
-			ps.setString(1, model.getEventID());
-			ps.setString(2, model.getName());
-			ps.setDate(3, model.getStartDate());
-			ps.setDate(4, model.getEndDate());
-			ps.setInt(5, model.getCapacity());
-
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO food VALUES (?, ?, ?)");
+			ps.setString(1, food.getFood_ID());
+			ps.setString(2, food.getType());
+			ps.setInt(3, food.getInventory_Amount());
 			ps.executeUpdate();
 			connection.commit();
+			ps.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+	}
 
+	// update food inventory amount
+	public void updateFood(String id, int amount) {
+		try {
+			PreparedStatement ps = connection.prepareStatement("UPDATE food SET inventory_amount = ? WHERE food_id = ?");
+			ps.setInt(1, amount);
+			ps.setString(2, id);
+			ps.executeUpdate();
+			connection.commit();
 			ps.close();
 		} catch (SQLException e) {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
@@ -116,5 +153,9 @@ public class DatabaseConnectionHandler {
 		} catch (SQLException e) {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 		}
+	}
+
+	private void getAnimalTuples(){
+
 	}
 }
