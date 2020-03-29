@@ -4,6 +4,7 @@ import zoo.model.AnimalModel;
 import zoo.model.FoodModel;
 
 import javax.swing.*;
+import javax.xml.transform.Result;
 import java.awt.*;
 import java.sql.*;
 
@@ -75,7 +76,11 @@ public class DatabaseConnectionHandler {
 		}
 	}
 
-	public void updateAnimal() {
+	public void updateAnimal() throws SQLException {
+		ResultSet animals = getAnimalTuples();
+		String[] animalPairs = new String[animals.getFetchSize()];
+
+
 		JPanel panel = new JPanel(new GridLayout(0,1));
 		panel.add(new JLabel("Which animal would you like to modify?"));
 		JComboBox boi = new JComboBox();
@@ -155,7 +160,17 @@ public class DatabaseConnectionHandler {
 		}
 	}
 
-	private void getAnimalTuples(){
-
+	// returns animal tuples
+	private ResultSet getAnimalTuples(){
+		try {
+			PreparedStatement ps = connection.prepareStatement("SELECT * from animals");
+			System.out.println("yote");
+			ResultSet result = ps.executeQuery();
+			return result;
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+		return null;
 	}
 }

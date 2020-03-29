@@ -6,6 +6,8 @@ import zoo.delegates.TerminalTransactionsDelegate;
 import zoo.ui.LoginWindow;
 import zoo.ui.TerminalTransactions;
 
+import java.sql.SQLException;
+
 /**
  * This is the main controller class that will orchestrate everything.
  */
