@@ -1,7 +1,5 @@
 package zoo.delegates;
 
-import zoo.model.BranchModel;
-
 /**
  * This interface uses the delegation design pattern where instead of having
  * the TerminalTransactions class try to do everything, it will only
