@@ -78,14 +78,11 @@ public class DatabaseConnectionHandler {
 
 	public void updateAnimal() throws SQLException {
 		ResultSet animals = getAnimalTuples();
-		System.out.println(animals);
 		Vector<String> animalPairs = new Vector<>();
 		while (animals.next()) {
 			String idName = "(" + animals.getString(1) + ", " + animals.getString(6) + ")";
-			System.out.println(idName);
 			animalPairs.add(idName);
 		}
-		/*
 		JFrame frame = new JFrame();
 		frame.setSize(300, 300);
 		JPanel panel = new JPanel(new GridLayout(0,1));
@@ -94,7 +91,6 @@ public class DatabaseConnectionHandler {
 		panel.add(boi);
 		frame.add(panel);
 		frame.setVisible(true);
-		*/
 	}
 
 	// called when a user wants to "delete" an employee, by supplying the date they left the zoo
