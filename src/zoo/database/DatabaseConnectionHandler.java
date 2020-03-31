@@ -80,7 +80,7 @@ public class DatabaseConnectionHandler {
 		ResultSet animals = getAnimalTuples();
 		Vector<String> animalPairs = new Vector<>();
 		while (animals.next()) {
-			String idName = "(" + animals.getString(1) + ", " + animals.getString(6) + ")";
+			String idName =  animals.getString(1) + ", " + animals.getString(6);
 			animalPairs.add(idName);
 		}
 		JFrame frame = new JFrame();
@@ -169,7 +169,7 @@ public class DatabaseConnectionHandler {
 	// returns animal tuples
 	private ResultSet getAnimalTuples(){
 		try {
-			PreparedStatement ps = connection.prepareStatement("SELECT * from animals");
+			PreparedStatement ps = connection.prepareStatement("SELECT * FROM Animals");
 			return ps.executeQuery();
 		} catch (SQLException e) {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
