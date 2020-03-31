@@ -20,8 +20,9 @@ public class ZooManagement implements LoginWindowDelegate, WelcomeWindowDelegate
 	
 	private void start() {
 		loginWindow = new LoginWindow();
-		loginWindow.showFrame(this);
+		//loginWindow.showFrame(this);
 		welcomeWindow = new WelcomeWindow();
+		welcomeWindow.showFrame();
 	}
 	
 	/**
