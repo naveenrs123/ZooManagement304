@@ -1,11 +1,11 @@
 package zoo.model;
 
-public class PenHabitatsHandler {
+public class PenHabitatsModel {
     private char Area_ID;
     private int Pen_Number;
     private String Habitat;
 
-    public PenHabitatsHandler(char area_ID, int pen_Number, String habitat) {
+    public PenHabitatsModel(char area_ID, int pen_Number, String habitat) {
         Area_ID = area_ID;
         Pen_Number = pen_Number;
         Habitat = habitat;

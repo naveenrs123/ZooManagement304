@@ -3,6 +3,8 @@ package zoo.database;
 import zoo.model.*;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * This class handles all database related transactions
@@ -13,7 +15,8 @@ public class DatabaseConnectionHandler {
 	private static final String WARNING_TAG = "[WARNING]";
 
 	private Connection connection = null;
-	
+	private Object Character;
+
 	public DatabaseConnectionHandler() {
 		try {
 			// Load the Oracle JDBC driver
@@ -90,9 +93,86 @@ public class DatabaseConnectionHandler {
 		}
 	}
 
+	public ZooEmployeeModel[] getEmployeeInfo() {
+		ArrayList<ZooEmployeeModel> result = new ArrayList<ZooEmployeeModel>();
+		try {
+			Statement stmt = connection.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM ZooEmployee");
+			while(rs.next()) {
+				ZooEmployeeModel model = new ZooEmployeeModel
+						(rs.getString("Employee_ID"),
+						rs.getString("Name"),
+						rs.getDate("Start_Date"), (char)rs.getObject("On_Duty"),
+						rs.getString("Address")
+				);
+				result.add(model);
+			}
+
+
+			rs.close();
+			stmt.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+		}
+		return result.toArray(new ZooEmployeeModel[result.size()]);
+	}
+    public AnimalModel[] getAnimalInfo() {
+        ArrayList<AnimalModel> result = new ArrayList<AnimalModel>();
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Animal");
+            while(rs.next()) {
+                AnimalModel model = new AnimalModel
+                        (rs.getString("animalID"),
+                                rs.getString("type"),
+                                 (char)rs.getObject("sex"),
+                                rs.getString("species"),
+                                rs.getInt("age"),
+                                rs.getString("name"),
+                                rs.getInt("penNumber"),
+                                (char)rs.getObject("areaID")
+                        );
+                result.add(model);
+            }
+
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+        return result.toArray(new AnimalModel[result.size()]);
+    }
+
+
+    public FoodModel[] getFoodInfo() {
+        ArrayList<FoodModel> result = new ArrayList<FoodModel>();
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Food");
+            while(rs.next()) {
+                FoodModel model = new FoodModel
+                        (rs.getString("food_ID"),
+                                rs.getString("type"),
+                                rs.getInt("inventory_Amount")
+                        );
+                result.add(model);
+            }
+
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+        return result.toArray(new FoodModel[result.size()]);
+    }
+
+
+
 	public void insertEmployee(ZooEmployeeModel model) {
 		try {
-			PreparedStatement ps = connection.prepareStatement("INSERT INTO EVENTINFO VALUES (?,?,?,?,?)");
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO ZooEmployee VALUES (?,?,?,?,?)");
 			ps.setString(1, model.getEmployee_ID());
 			ps.setString(2, model.getName());
 			ps.setDate(3, model.getStartDate());
@@ -111,7 +191,7 @@ public class DatabaseConnectionHandler {
 
 	public void insertHealthCheckup(HealthCheckupModel model) {
 		try {
-			PreparedStatement ps = connection.prepareStatement("INSERT INTO EVENTINFO VALUES (?,?,?,?,?)");
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO HealthCheckup VALUES (?,?,?,?,?)");
 			ps.setString(1, model.getCheckupID());
 			ps.setString(2, model.getAnimalID());
 			ps.setInt(3, model.getWeight());
@@ -129,8 +209,39 @@ public class DatabaseConnectionHandler {
 			rollbackConnection();
 		}
 	}
+	public void InsertPenCleaning(PenCleaningModel model) {
+		try {
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO PenCleaning VALUES (?,?,?,?,?,?,?,?)");
+			ps.setString(1, model.getEmployee_ID());
+			ps.setInt(2, model.getPen_Number());
+			ps.setObject(3, model.getArea_ID(), Types.CHAR);
+			ps.setDate(4, model.getDate_of_cleaning());
 
-	
+			ps.executeUpdate();
+			connection.commit();
+			ps.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+	}
+
+
+	public void InsertFoodModel(FoodModel model) {
+		try {
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO Food VALUES (?,?,?,?,?,?,?,?)");
+			ps.setString(1, model.getFood_ID());
+			ps.setString(2, model.getType());
+			ps.setInt(3, model.getInventory_Amount());
+
+			ps.executeUpdate();
+			connection.commit();
+			ps.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+	}
 
 
 	private void rollbackConnection() {
