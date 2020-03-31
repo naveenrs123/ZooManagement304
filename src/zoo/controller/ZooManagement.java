@@ -3,6 +3,8 @@ package zoo.controller;
 import zoo.database.DatabaseConnectionHandler;
 import zoo.delegates.LoginWindowDelegate;
 import zoo.delegates.WelcomeWindowDelegate;
+import zoo.model.AnimalModel;
+import zoo.model.ZooEmployeeModel;
 import zoo.ui.LoginWindow;
 import zoo.ui.WelcomeWindow;
 
@@ -38,6 +40,7 @@ public class ZooManagement implements LoginWindowDelegate, WelcomeWindowDelegate
 			loginWindow.dispose();
 			welcomeWindow.showFrame();
 
+			finished();
 		} else {
 			loginWindow.handleLoginFailed();
 
@@ -47,6 +50,8 @@ public class ZooManagement implements LoginWindowDelegate, WelcomeWindowDelegate
 				System.exit(-1);
 			}
 		}
+
+
 	}
 
     /**

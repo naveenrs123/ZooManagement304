@@ -1,9 +1,10 @@
 package zoo.database;
 
-import zoo.model.AnimalModel;
-import zoo.model.EventInfoModel;
+import zoo.model.*;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * This class handles all database related transactions
@@ -14,7 +15,8 @@ public class DatabaseConnectionHandler {
 	private static final String WARNING_TAG = "[WARNING]";
 
 	private Connection connection = null;
-	
+	private Object Character;
+
 	public DatabaseConnectionHandler() {
 		try {
 			// Load the Oracle JDBC driver
@@ -73,10 +75,10 @@ public class DatabaseConnectionHandler {
 		}
 	}
 
-	public void deleteAnimal(int animalID) {
+	public void deleteAnimal(String animalID) {
 		try {
-			PreparedStatement ps = connection.prepareStatement("DELETE FROM animals WHERE animal_id = ?");
-			ps.setInt(1, animalID);
+			PreparedStatement ps = connection.prepareStatement("DELETE FROM animals WHERE animal_id LIKE ?");
+			ps.setString(1, animalID);
 
 			int rowCount = ps.executeUpdate();
 			if (rowCount == 0) {
@@ -91,14 +93,93 @@ public class DatabaseConnectionHandler {
 		}
 	}
 
-	public void insertEvent(EventInfoModel model) {
+	public ZooEmployeeModel[] getEmployeeInfo() {
+		ArrayList<ZooEmployeeModel> result = new ArrayList<ZooEmployeeModel>();
 		try {
-			PreparedStatement ps = connection.prepareStatement("INSERT INTO EVENTINFO VALUES (?,?,?,?,?)");
-			ps.setString(1, model.getEventID());
+			Statement stmt = connection.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM ZooEmployee");
+			while(rs.next()) {
+				ZooEmployeeModel model = new ZooEmployeeModel
+						(rs.getString("Employee_ID"),
+						rs.getString("Name"),
+						rs.getDate("Start_Date"),
+						rs.getDate("End_Date"),
+						rs.getString("On_Duty").charAt(0)
+				);
+				result.add(model);
+			}
+
+
+			rs.close();
+			stmt.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+		}
+		return result.toArray(new ZooEmployeeModel[result.size()]);
+	}
+    public AnimalModel[] getAnimalInfo() {
+        ArrayList<AnimalModel> result = new ArrayList<AnimalModel>();
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Animals");
+            while(rs.next()) {
+                AnimalModel model = new AnimalModel
+                        (rs.getString("Animal_ID"),
+                                rs.getString("Type"),
+                                 (char)rs.getObject("Sex"),
+                                rs.getString("Species"),
+                                rs.getInt("Age"),
+                                rs.getString("Name"),
+                                rs.getInt("Pen_Number"),
+                                (char)rs.getObject("Area_ID")
+                        );
+                result.add(model);
+            }
+
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+        AnimalModel[] r = result.toArray(new AnimalModel[result.size()]);
+		return r;
+    }
+
+
+    public FoodModel[] getFoodInfo() {
+        ArrayList<FoodModel> result = new ArrayList<FoodModel>();
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Food");
+            while(rs.next()) {
+                FoodModel model = new FoodModel
+                        (rs.getString("food_ID"),
+                                rs.getString("type"),
+                                rs.getInt("inventory_Amount")
+                        );
+                result.add(model);
+            }
+
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+        return result.toArray(new FoodModel[result.size()]);
+    }
+
+
+
+	public void insertEmployee(ZooEmployeeModel model) {
+		try {
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO ZooEmployee VALUES (?,?,?,?,?)");
+			ps.setString(1, model.getEmployee_ID());
 			ps.setString(2, model.getName());
 			ps.setDate(3, model.getStartDate());
 			ps.setDate(4, model.getEndDate());
-			ps.setInt(5, model.getCapacity());
+			ps.setObject(5, model.getOnDuty(), Types.CHAR);
 
 			ps.executeUpdate();
 			connection.commit();
@@ -109,6 +190,60 @@ public class DatabaseConnectionHandler {
 			rollbackConnection();
 		}
 	}
+
+	public void insertHealthCheckup(HealthCheckupModel model) {
+		try {
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO HealthCheckup VALUES (?,?,?,?,?,?)");
+			ps.setString(1, model.getCheckupID());
+			ps.setString(2, model.getEmployeeID());
+			ps.setString(3, model.getAnimalID());
+			ps.setInt(4, model.getWeight());
+			ps.setString(4, model.getHealthStatus());
+			ps.setDate(5, model.getCheckupDate());
+
+			ps.executeUpdate();
+			connection.commit();
+
+			ps.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+	}
+	public void InsertPenCleaning(PenCleaningModel model) {
+		try {
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO PenCleaning VALUES (?,?,?,?,?,?,?,?)");
+			ps.setString(1, model.getEmployee_ID());
+			ps.setInt(2, model.getPen_Number());
+			ps.setObject(3, model.getArea_ID(), Types.CHAR);
+			ps.setDate(4, model.getDate_of_cleaning());
+
+			ps.executeUpdate();
+			connection.commit();
+			ps.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+	}
+
+
+	public void InsertFoodModel(FoodModel model) {
+		try {
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO Food VALUES (?,?,?,?,?,?,?,?)");
+			ps.setString(1, model.getFood_ID());
+			ps.setString(2, model.getType());
+			ps.setInt(3, model.getInventory_Amount());
+
+			ps.executeUpdate();
+			connection.commit();
+			ps.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+	}
+
 
 	private void rollbackConnection() {
 		try  {
