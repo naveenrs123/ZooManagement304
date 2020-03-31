@@ -75,10 +75,10 @@ public class DatabaseConnectionHandler {
 		}
 	}
 
-	public void deleteAnimal(int animalID) {
+	public void deleteAnimal(String animalID) {
 		try {
-			PreparedStatement ps = connection.prepareStatement("DELETE FROM animals WHERE animal_id = ?");
-			ps.setInt(1, animalID);
+			PreparedStatement ps = connection.prepareStatement("DELETE FROM animals WHERE animal_id LIKE ?");
+			ps.setString(1, animalID);
 
 			int rowCount = ps.executeUpdate();
 			if (rowCount == 0) {
@@ -102,8 +102,9 @@ public class DatabaseConnectionHandler {
 				ZooEmployeeModel model = new ZooEmployeeModel
 						(rs.getString("Employee_ID"),
 						rs.getString("Name"),
-						rs.getDate("Start_Date"), (char)rs.getObject("On_Duty"),
-						rs.getString("Address")
+						rs.getDate("Start_Date"),
+						rs.getDate("End_Date"),
+						rs.getString("On_Duty").charAt(0)
 				);
 				result.add(model);
 			}
@@ -120,17 +121,17 @@ public class DatabaseConnectionHandler {
         ArrayList<AnimalModel> result = new ArrayList<AnimalModel>();
         try {
             Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM Animal");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Animals");
             while(rs.next()) {
                 AnimalModel model = new AnimalModel
-                        (rs.getString("animalID"),
-                                rs.getString("type"),
-                                 (char)rs.getObject("sex"),
-                                rs.getString("species"),
-                                rs.getInt("age"),
-                                rs.getString("name"),
-                                rs.getInt("penNumber"),
-                                (char)rs.getObject("areaID")
+                        (rs.getString("Animal_ID"),
+                                rs.getString("Type"),
+                                 (char)rs.getObject("Sex"),
+                                rs.getString("Species"),
+                                rs.getInt("Age"),
+                                rs.getString("Name"),
+                                rs.getInt("Pen_Number"),
+                                (char)rs.getObject("Area_ID")
                         );
                 result.add(model);
             }
@@ -141,7 +142,8 @@ public class DatabaseConnectionHandler {
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
-        return result.toArray(new AnimalModel[result.size()]);
+        AnimalModel[] r = result.toArray(new AnimalModel[result.size()]);
+		return r;
     }
 
 
@@ -176,8 +178,8 @@ public class DatabaseConnectionHandler {
 			ps.setString(1, model.getEmployee_ID());
 			ps.setString(2, model.getName());
 			ps.setDate(3, model.getStartDate());
-			ps.setObject(4, model.getOnDuty(), Types.CHAR);
-			ps.setString(5, model.getAddress());
+			ps.setDate(4, model.getEndDate());
+			ps.setObject(5, model.getOnDuty(), Types.CHAR);
 
 			ps.executeUpdate();
 			connection.commit();
@@ -191,13 +193,12 @@ public class DatabaseConnectionHandler {
 
 	public void insertHealthCheckup(HealthCheckupModel model) {
 		try {
-			PreparedStatement ps = connection.prepareStatement("INSERT INTO HealthCheckup VALUES (?,?,?,?,?)");
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO HealthCheckup VALUES (?,?,?,?,?,?)");
 			ps.setString(1, model.getCheckupID());
-			ps.setString(2, model.getAnimalID());
-			ps.setInt(3, model.getWeight());
+			ps.setString(2, model.getEmployeeID());
+			ps.setString(3, model.getAnimalID());
+			ps.setInt(4, model.getWeight());
 			ps.setString(4, model.getHealthStatus());
-			ps.setString(5, model.getMedication());
-			ps.setString(6, model.getMedication());
 			ps.setDate(5, model.getCheckupDate());
 
 			ps.executeUpdate();
