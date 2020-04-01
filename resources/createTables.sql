@@ -145,28 +145,11 @@ CREATE TABLE Feeding
     Food_ID              varchar(6),
     Animal_ID            varchar(6),
     Employee_ID          varchar(6),
-    Amount               number      NOT NULL,
-    Date_Time_Of_Feeding timestamp NOT NULL,
+    Amount               number NOT NULL,
+    Date_Of_Feeding      date NOT NULL,
     PRIMARY KEY (Food_ID, Animal_ID, Employee_ID),
     FOREIGN KEY (Food_ID) REFERENCES Food,
     FOREIGN KEY (Animal_ID) REFERENCES Animals
         ON DELETE CASCADE,
     FOREIGN KEY (Employee_ID) REFERENCES ZookeeperEmployee
 );
-
-/*
-DROP TABLE FEEDING;
-DROP TABLE FOODPREFERENCES;
-DROP TABLE FOOD;
-DROP TABLE ANIMALRELOCATION;
-DROP TABLE HEALTHCHECKUP;
-DROP TABLE ANIMALS;
-DROP TABLE PENCLEANING;
-DROP TABLE PENINFO;
-DROP TABLE PENHABITATS;
-DROP TABLE AREA;
-DROP TABLE MANAGEREMPLOYEE;
-DROP TABLE VETEMPLOYEE;
-DROP TABLE ZOOKEEPEREMPLOYEE;
-DROP TABLE ZOOEMPLOYEE;
-*/
