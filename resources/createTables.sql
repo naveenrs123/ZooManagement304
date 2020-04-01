@@ -23,7 +23,6 @@ CREATE TABLE VetEmployee
     Experience     number NOT NULL,
     Specialization varchar(30),
     Phone_Number   varchar(12),
-
     PRIMARY KEY (Employee_ID),
     FOREIGN KEY (Employee_ID) REFERENCES ZooEmployee (Employee_ID)
 );
@@ -91,7 +90,7 @@ CREATE TABLE Animals
     Area_ID    char,
     PRIMARY KEY (Animal_ID),
     FOREIGN KEY (Pen_Number, Area_ID) REFERENCES PenInfo
-);
+)
 
 CREATE TABLE HealthCheckup
 (
@@ -100,7 +99,7 @@ CREATE TABLE HealthCheckup
     Animal_ID     varchar(6),
     Weight        number  NOT NULL,
     Health_Status varchar(10) NOT NULL,
-    CheckupDate          date NOT NULL,
+    CheckupDate   date NOT NULL,
     PRIMARY KEY (Checkup_ID),
     FOREIGN KEY (Employee_ID) REFERENCES VetEmployee (Employee_ID),
     FOREIGN KEY (Animal_ID) REFERENCES Animals
