@@ -4,7 +4,6 @@ import zoo.model.*;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * This class handles all database related transactions
@@ -15,7 +14,6 @@ public class DatabaseConnectionHandler {
 	private static final String WARNING_TAG = "[WARNING]";
 
 	private Connection connection = null;
-	private Object Character;
 
 	public DatabaseConnectionHandler() {
 		try {

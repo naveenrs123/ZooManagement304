@@ -5,12 +5,9 @@ import zoo.model.ZooEmployeeModel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Vector;
 
 public class EmployeeWindow extends JFrame {
@@ -40,8 +37,6 @@ public class EmployeeWindow extends JFrame {
         columnNames.add("Start Date");
         columnNames.add("End Date");
         columnNames.add("On Duty?");
-
-
 
         Vector<Vector<String>> rowData = new Vector();
         ZooEmployeeModel[] employees = dbhandler.getEmployeeInfo();
