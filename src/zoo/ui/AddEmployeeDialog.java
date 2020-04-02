@@ -336,7 +336,6 @@ public class AddEmployeeDialog extends JFrame {
             employeeData = new Vector<>();
             employeeData.add(employee.getEmployee_ID());
             employeeData.add(employee.getName());
-            System.out.println(employee.getName());
             String enddate;
             if (employee.getEndDate() == null) {
                 enddate = "Currently employed";
