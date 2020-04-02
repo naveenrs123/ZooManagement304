@@ -12,6 +12,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.Vector;
 
 public class EmployeeWindow extends JFrame {
@@ -24,7 +26,8 @@ public class EmployeeWindow extends JFrame {
     public EmployeeWindow(DatabaseConnectionHandler dbhandler) {
         super("Employee Management");
         this.dbhandler = dbhandler;
-        addEmployeeDialog = new AddEmployeeDialog(dbhandler);
+        this.table = new JTable();
+        addEmployeeDialog = new AddEmployeeDialog(dbhandler, table);
         updateEmployeeDialog = new UpdateEmployeeDialog();
     }
 
@@ -34,8 +37,6 @@ public class EmployeeWindow extends JFrame {
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
 
         JPanel titlePane = createTitlePane();
-
-        table = new JTable();
         sharedInfo();
 
         employeeScroll = new JScrollPane(table);

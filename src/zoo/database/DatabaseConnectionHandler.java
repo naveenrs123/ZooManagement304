@@ -215,6 +215,96 @@ public class DatabaseConnectionHandler {
 		return result.toArray(new ManagerEmployeeModel[result.size()]);
 	}
 
+	public void insertVetEmployee(VetEmployeeModel model) {
+		ZooEmployeeModel zooEmployeeModel = new ZooEmployeeModel(
+				model.getEmployee_ID(),
+				model.getName(),
+				model.getStartDate(),
+				model.getEndDate(),
+				model.getOnDuty()
+		);
+		insertEmployee(zooEmployeeModel);
+		try {
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO VetEmployee VALUES (?,?,?,?,?)");
+			ps.setString(1, model.getEmployee_ID());
+			ps.setString(2, String.valueOf(model.getOnCall()));
+			ps.setInt(3, model.getExperience());
+			ps.setString(4, model.getSpecialization());
+			ps.setString(5, model.getPhoneNumber());
+			ps.executeUpdate();
+			connection.commit();
+			ps.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+	}
+
+	public void insertZookeeperEmployee(ZookeeperEmployeeModel model) {
+		ZooEmployeeModel zooEmployeeModel = new ZooEmployeeModel(
+				model.getEmployee_ID(),
+				model.getName(),
+				model.getStartDate(),
+				model.getEndDate(),
+				model.getOnDuty()
+		);
+		insertEmployee(zooEmployeeModel);
+		try {
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO ZookeeperEmployee VALUES (?,?)");
+			ps.setString(1, model.getEmployee_ID());
+			ps.setString(2, String.valueOf(model.getEventDuty()));
+			ps.executeUpdate();
+			connection.commit();
+			ps.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+	}
+
+	public void insertManagerEmployee(ManagerEmployeeModel model) {
+		ZooEmployeeModel zooEmployeeModel = new ZooEmployeeModel(
+				model.getEmployee_ID(),
+				model.getName(),
+				model.getStartDate(),
+				model.getEndDate(),
+				model.getOnDuty()
+		);
+		insertEmployee(zooEmployeeModel);
+		try {
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO ManagerEmployee VALUES (?,?,?)");
+			ps.setString(1, model.getEmployee_ID());
+			ps.setString(2, String.valueOf(model.getInOffice()));
+			ps.setInt(3, model.getOfficeNumber());
+			ps.executeUpdate();
+			connection.commit();
+
+			ps.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+	}
+
+	public void insertEmployee(ZooEmployeeModel model) {
+		try {
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO ZooEmployee VALUES (?,?,?,?,?)");
+			ps.setString(1, model.getEmployee_ID());
+			ps.setString(2, model.getName());
+			ps.setDate(3, model.getStartDate());
+			ps.setDate(4, model.getEndDate());
+			ps.setString(5, String.valueOf(model.getOnDuty()));
+
+			ps.executeUpdate();
+			connection.commit();
+
+			ps.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+	}
+
 	public void updateEmployee(ZooEmployeeModel employee) {
 		String id = employee.getEmployee_ID();
 		try {
@@ -270,7 +360,6 @@ public class DatabaseConnectionHandler {
                 result.add(model);
             }
 
-
             rs.close();
             stmt.close();
         } catch (SQLException e) {
@@ -303,27 +392,6 @@ public class DatabaseConnectionHandler {
         }
         return result.toArray(new FoodModel[result.size()]);
     }
-
-
-
-	public void insertEmployee(ZooEmployeeModel model) {
-		try {
-			PreparedStatement ps = connection.prepareStatement("INSERT INTO ZooEmployee VALUES (?,?,?,?,?)");
-			ps.setString(1, model.getEmployee_ID());
-			ps.setString(2, model.getName());
-			ps.setDate(3, model.getStartDate());
-			ps.setDate(4, model.getEndDate());
-			ps.setObject(5, model.getOnDuty(), Types.CHAR);
-
-			ps.executeUpdate();
-			connection.commit();
-
-			ps.close();
-		} catch (SQLException e) {
-			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-			rollbackConnection();
-		}
-	}
 
 	public void insertHealthCheckup(HealthCheckupModel model) {
 		try {
