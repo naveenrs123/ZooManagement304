@@ -1,5 +1,7 @@
 package zoo.ui;
 
+import zoo.database.DatabaseConnectionHandler;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -8,9 +10,13 @@ import java.awt.event.WindowEvent;
 
 public class HealthCheckupWindow extends JFrame {
 
-    public HealthCheckupWindow() {
+    DatabaseConnectionHandler dbhandler;
+
+    public HealthCheckupWindow(DatabaseConnectionHandler dbhandler) {
         super("Health Checkups");
+        this.dbhandler = dbhandler;
     }
+
 
     public void showFrame() {
         JPanel contentPane = new JPanel();

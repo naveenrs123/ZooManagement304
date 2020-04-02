@@ -4,7 +4,6 @@ import zoo.model.*;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * This class handles all database related transactions
@@ -15,7 +14,6 @@ public class DatabaseConnectionHandler {
 	private static final String WARNING_TAG = "[WARNING]";
 
 	private Connection connection = null;
-	private Object Character;
 
 	public DatabaseConnectionHandler() {
 		try {
@@ -108,8 +106,6 @@ public class DatabaseConnectionHandler {
 				);
 				result.add(model);
 			}
-
-
 			rs.close();
 			stmt.close();
 		} catch (SQLException e) {
@@ -117,6 +113,43 @@ public class DatabaseConnectionHandler {
 		}
 		return result.toArray(new ZooEmployeeModel[result.size()]);
 	}
+
+	public void updateEmployee(ZooEmployeeModel employee) {
+		String id = employee.getEmployee_ID();
+		try {
+
+			if (employee.getName() != null) {
+				PreparedStatement ps = connection.prepareStatement("UPDATE ZooEmployee SET name = ? WHERE Employee_ID = ?");
+				ps.setString(1, employee.getName());
+				ps.setString(2, id);
+				ps.executeUpdate();
+				connection.commit();
+				ps.close();
+
+			} else if (employee.getStartDate() != null) {
+				PreparedStatement ps = connection.prepareStatement("UPDATE ZooEmployee SET start_date = ? WHERE Employee_ID = ?");
+				ps.setDate(1, employee.getStartDate());
+				ps.setString(2, id);
+				ps.executeUpdate();
+				connection.commit();
+				ps.close();
+
+			} else if (employee.getOnDuty() != 'N') {
+				PreparedStatement ps = connection.prepareStatement("UPDATE ZooEmployee SET on_duty = ? WHERE Employee_ID = ?");
+				ps.setString(1, String.valueOf(employee.getOnDuty()));
+				ps.setString(2, id);
+				ps.executeUpdate();
+				connection.commit();
+				ps.close();
+			}
+
+		} catch (SQLException e) {
+			System.out.println("error");
+		}
+	}
+
+
+
     public AnimalModel[] getAnimalInfo() {
         ArrayList<AnimalModel> result = new ArrayList<AnimalModel>();
         try {

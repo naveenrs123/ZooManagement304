@@ -1,5 +1,7 @@
 package zoo.ui;
 
+import zoo.database.DatabaseConnectionHandler;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -8,9 +10,13 @@ import java.awt.event.WindowEvent;
 
 public class FoodWindow extends JFrame {
 
-    public FoodWindow() {
-        super("Food Inventory and Feedings");
+    DatabaseConnectionHandler dbhandler;
+
+    public FoodWindow(DatabaseConnectionHandler dbhandler) {
+        super("Food and Inventory");
+        this.dbhandler = dbhandler;
     }
+
 
     public void showFrame() {
         JPanel contentPane = new JPanel();

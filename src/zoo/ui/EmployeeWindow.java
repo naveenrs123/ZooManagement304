@@ -1,17 +1,23 @@
 package zoo.ui;
 
+import zoo.database.DatabaseConnectionHandler;
+import zoo.model.ZooEmployeeModel;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 
 public class EmployeeWindow extends JFrame {
     AddEmployeeDialog addEmployeeDialog;
     UpdateEmployeeDialog updateEmployeeDialog;
+    DatabaseConnectionHandler dbhandler;
 
-    public EmployeeWindow() {
+    public EmployeeWindow(DatabaseConnectionHandler dbhandler) {
         super("Employee Management");
+        this.dbhandler = dbhandler;
         addEmployeeDialog = new AddEmployeeDialog();
         updateEmployeeDialog = new UpdateEmployeeDialog();
     }
@@ -25,14 +31,40 @@ public class EmployeeWindow extends JFrame {
         this.setResizable(false);
 
         JPanel titlePane = createTitlePane();
+        Vector<String> columnNames = new Vector<>();
+        columnNames.add("Employee ID");
+        columnNames.add("Name");
+        columnNames.add("Start Date");
+        columnNames.add("End Date");
+        columnNames.add("On Duty?");
 
-        JScrollPane employeeScroll = new JScrollPane();
+        Vector<Vector<String>> rowData = new Vector();
+        ZooEmployeeModel[] employees = dbhandler.getEmployeeInfo();
+        System.out.println(employees.length);
+        Vector<String> employeeData = new Vector<>();
+        System.out.println("hooooo");
+        for (ZooEmployeeModel employee: employees) {
+            employeeData = new Vector<>();
+            employeeData.add(employee.getEmployee_ID());
+            employeeData.add(employee.getName());
+            String enddate;
+            if (employee.getEndDate() == null) {
+                enddate = "Currently employed";
+            } else {
+                enddate = employee.getEndDate().toString();
+            }
+            employeeData.add(employee.getStartDate().toString());
+            employeeData.add(enddate);
+            employeeData.add(Character.toString(employee.getOnDuty()));
+            rowData.add(employeeData);
+        }
+        JTable table = new JTable(rowData, columnNames);
+        JList<String> employeeList = new JList<String>();
+        employeeList.setFixedCellWidth(600);
+        JScrollPane employeeScroll = new JScrollPane(table);
         employeeScroll.setPreferredSize(new Dimension(700, 300));
         employeeScroll.setMaximumSize(new Dimension(700, 300));
         employeeScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        JList<String> employeeList = new JList<String>();
-        employeeList.setFixedCellWidth(600);
-        employeeScroll.add(employeeList);
 
         JPanel employeeButtons = new JPanel();
         employeeButtons.setLayout(new BoxLayout(employeeButtons, BoxLayout.LINE_AXIS));
