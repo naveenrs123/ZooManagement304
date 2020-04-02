@@ -23,7 +23,7 @@ public class ZooManagement implements LoginWindowDelegate, WelcomeWindowDelegate
 	private void start() {
 		loginWindow = new LoginWindow();
 		loginWindow.showFrame(this);
-		welcomeWindow = new WelcomeWindow();
+		welcomeWindow = new WelcomeWindow(this.dbHandler);
 	}
 	
 	/**
@@ -39,7 +39,7 @@ public class ZooManagement implements LoginWindowDelegate, WelcomeWindowDelegate
 			loginWindow.dispose();
 			welcomeWindow.showFrame();
 
-			finished();
+			//finished();
 		} else {
 			loginWindow.handleLoginFailed();
 

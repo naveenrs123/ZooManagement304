@@ -1,15 +1,20 @@
 package zoo.ui;
 
+import zoo.database.DatabaseConnectionHandler;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class AreaPensWindow extends JFrame {
+    DatabaseConnectionHandler dbhandler;
 
-    public AreaPensWindow() {
+    public AreaPensWindow(DatabaseConnectionHandler dbhandler) {
         super("Areas and Pens");
+        this.dbhandler = dbhandler;
     }
 
     public void showFrame() {

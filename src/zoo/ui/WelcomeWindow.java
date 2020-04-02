@@ -1,5 +1,7 @@
 package zoo.ui;
 
+import zoo.database.DatabaseConnectionHandler;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -14,14 +16,17 @@ public class WelcomeWindow extends JFrame implements ActionListener {
     FoodWindow foodWindow;
     HealthCheckupWindow healthCheckupWindow;
     AreaPensWindow areaPensWindow;
+    DatabaseConnectionHandler dbhandler;
 
-    public WelcomeWindow() {
+
+    public WelcomeWindow(DatabaseConnectionHandler dbhandler) {
         super("Zoo Management Portal");
-        animalWindow = new AnimalWindow();
-        employeeWindow = new EmployeeWindow();
-        foodWindow = new FoodWindow();
-        healthCheckupWindow = new HealthCheckupWindow();
-        areaPensWindow = new AreaPensWindow();
+        this.dbhandler = dbhandler;
+        animalWindow = new AnimalWindow(this.dbhandler);
+        employeeWindow = new EmployeeWindow(this.dbhandler);
+        foodWindow = new FoodWindow(this.dbhandler);
+        healthCheckupWindow = new HealthCheckupWindow(this.dbhandler);
+        areaPensWindow = new AreaPensWindow(this.dbhandler);
     }
 
     public void showFrame() {

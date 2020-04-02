@@ -1,5 +1,7 @@
 package zoo.ui;
 
+import zoo.database.DatabaseConnectionHandler;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -7,9 +9,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class AnimalWindow extends JFrame {
+    DatabaseConnectionHandler dbhandler;
 
-    public AnimalWindow() {
+    public AnimalWindow(DatabaseConnectionHandler dbhandler) {
         super("Animal Management");
+        this.dbhandler = dbhandler;
     }
 
     public void showFrame() {

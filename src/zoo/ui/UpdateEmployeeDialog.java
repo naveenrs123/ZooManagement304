@@ -10,10 +10,14 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Properties;
 
-public class UpdateEmployeeDialog extends JFrame {
+public class UpdateEmployeeDialog extends JFrame implements ActionListener {
+    private JButton submit;
+    private JButton clear;
     ArrayList<JTextField> textFieldList = new ArrayList<>();
     ArrayList<JComboBox> comboBoxList = new ArrayList<>();
     ArrayList<JDatePicker> datePickers = new ArrayList<>();
@@ -34,8 +38,10 @@ public class UpdateEmployeeDialog extends JFrame {
         employeeButtons.setLayout(new BoxLayout(employeeButtons, BoxLayout.LINE_AXIS));
         employeeButtons.setPreferredSize(new Dimension(800, 50));
         employeeButtons.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JButton submit = new JButton("Submit");
-        JButton clear = new JButton("Clear Fields");
+        submit = new JButton("Submit");
+        clear = new JButton("Clear Fields");
+        submit.addActionListener(this);
+        clear.addActionListener(this);
         employeeButtons.add(submit);
         employeeButtons.add(Box.createRigidArea(new Dimension(10, 0)));
         employeeButtons.add(clear);
@@ -236,5 +242,12 @@ public class UpdateEmployeeDialog extends JFrame {
         label.setBorder(new EmptyBorder(0, 0, 0, 5));
         label.setFont(new Font("Sans Serif", Font.BOLD, 16));
         return label;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent actionEvent) {
+        if (actionEvent.getSource() == submit) {
+
+        }
     }
 }
