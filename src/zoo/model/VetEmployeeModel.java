@@ -10,8 +10,8 @@ public class VetEmployeeModel extends ZooEmployeeModel {
     private int Phone_Number;
 
 
-    public VetEmployeeModel(String employee_ID, String name, Date startDate, char onDuty, String address, char onCall, int experience, String specialization, int phone_number) {
-        super(employee_ID, name, startDate, onDuty, address);
+    public VetEmployeeModel(String employee_ID, String name, Date startDate, Date endDate, char onDuty, char onCall, int experience, String specialization, int phone_number) {
+        super(employee_ID, name, startDate, endDate, onDuty);
         this.OnCall = onCall;
         this.Experience = experience;
         this.Specialization = specialization;

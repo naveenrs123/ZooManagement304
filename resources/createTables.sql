@@ -23,7 +23,6 @@ CREATE TABLE VetEmployee
     Experience     number NOT NULL,
     Specialization varchar(30),
     Phone_Number   varchar(12),
-
     PRIMARY KEY (Employee_ID),
     FOREIGN KEY (Employee_ID) REFERENCES ZooEmployee (Employee_ID)
 );
@@ -91,7 +90,7 @@ CREATE TABLE Animals
     Area_ID    char,
     PRIMARY KEY (Animal_ID),
     FOREIGN KEY (Pen_Number, Area_ID) REFERENCES PenInfo
-);
+)
 
 CREATE TABLE HealthCheckup
 (
@@ -100,7 +99,7 @@ CREATE TABLE HealthCheckup
     Animal_ID     varchar(6),
     Weight        number  NOT NULL,
     Health_Status varchar(10) NOT NULL,
-    CheckupDate          date NOT NULL,
+    CheckupDate   date NOT NULL,
     PRIMARY KEY (Checkup_ID),
     FOREIGN KEY (Employee_ID) REFERENCES VetEmployee (Employee_ID),
     FOREIGN KEY (Animal_ID) REFERENCES Animals
@@ -145,28 +144,11 @@ CREATE TABLE Feeding
     Food_ID              varchar(6),
     Animal_ID            varchar(6),
     Employee_ID          varchar(6),
-    Amount               number      NOT NULL,
-    Date_Time_Of_Feeding timestamp NOT NULL,
+    Amount               number NOT NULL,
+    Date_Of_Feeding      date NOT NULL,
     PRIMARY KEY (Food_ID, Animal_ID, Employee_ID),
     FOREIGN KEY (Food_ID) REFERENCES Food,
     FOREIGN KEY (Animal_ID) REFERENCES Animals
         ON DELETE CASCADE,
     FOREIGN KEY (Employee_ID) REFERENCES ZookeeperEmployee
 );
-
-/*
-DROP TABLE FEEDING;
-DROP TABLE FOODPREFERENCES;
-DROP TABLE FOOD;
-DROP TABLE ANIMALRELOCATION;
-DROP TABLE HEALTHCHECKUP;
-DROP TABLE ANIMALS;
-DROP TABLE PENCLEANING;
-DROP TABLE PENINFO;
-DROP TABLE PENHABITATS;
-DROP TABLE AREA;
-DROP TABLE MANAGEREMPLOYEE;
-DROP TABLE VETEMPLOYEE;
-DROP TABLE ZOOKEEPEREMPLOYEE;
-DROP TABLE ZOOEMPLOYEE;
-*/
