@@ -2,6 +2,7 @@ package zoo.ui;
 
 import org.jdatepicker.JDatePicker;
 import org.jdatepicker.UtilCalendarModel;
+import zoo.database.DatabaseConnectionHandler;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -14,12 +15,14 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 public class AddEmployeeDialog extends JFrame {
+    DatabaseConnectionHandler dbhandler;
     ArrayList<JTextField> textFieldList = new ArrayList<>();
     ArrayList<JComboBox> comboBoxList = new ArrayList<>();
     ArrayList<JDatePicker> datePickers = new ArrayList<>();
 
-    public AddEmployeeDialog() {
+    public AddEmployeeDialog(DatabaseConnectionHandler dbhandler) {
         super("Add Employee");
+        this.dbhandler = dbhandler;
     }
 
     public void showFrame() {

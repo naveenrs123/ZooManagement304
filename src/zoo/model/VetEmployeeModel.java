@@ -7,15 +7,15 @@ public class VetEmployeeModel extends ZooEmployeeModel {
     private char OnCall;
     private int Experience;
     private String Specialization;
-    private int Phone_Number;
+    private String PhoneNumber;
 
 
-    public VetEmployeeModel(String employee_ID, String name, Date startDate, Date endDate, char onDuty, char onCall, int experience, String specialization, int phone_number) {
+    public VetEmployeeModel(String employee_ID, String name, Date startDate, Date endDate, char onDuty, char onCall, int experience, String specialization, String phone_number) {
         super(employee_ID, name, startDate, endDate, onDuty);
         this.OnCall = onCall;
         this.Experience = experience;
         this.Specialization = specialization;
-        this.Phone_Number = phone_number;
+        this.PhoneNumber = phone_number;
     }
 
     public char getOnCall() {
@@ -30,7 +30,7 @@ public class VetEmployeeModel extends ZooEmployeeModel {
         return Specialization;
     }
 
-    public int getPhone_Number() {
-        return Phone_Number;
+    public String getPhoneNumber() {
+        return PhoneNumber;
     }
 }

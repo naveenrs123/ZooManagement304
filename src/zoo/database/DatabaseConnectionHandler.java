@@ -4,6 +4,7 @@ import zoo.model.*;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 /**
  * This class handles all database related transactions
@@ -112,6 +113,106 @@ public class DatabaseConnectionHandler {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 		}
 		return result.toArray(new ZooEmployeeModel[result.size()]);
+	}
+
+	public ZookeeperEmployeeModel[] getZookeeperEmployeeInfo() {
+		ArrayList<ZookeeperEmployeeModel> result = new ArrayList<>();
+		try {
+			Statement stmt = connection.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM ZooEmployee INNER JOIN ZookeeperEmployee ON ZooEmployee.employee_id = ZookeeperEmployee.employee_id");
+			while(rs.next()) {
+				ZookeeperEmployeeModel model = new ZookeeperEmployeeModel
+						(rs.getString(1),
+								rs.getString("Name"),
+								rs.getDate("Start_Date"),
+								rs.getDate("End_Date"),
+								rs.getString("On_Duty").charAt(0),
+								rs.getString("Event_Duty").charAt(0)
+						);
+				result.add(model);
+			}
+			rs.close();
+			stmt.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+		}
+		result.sort(new Comparator<ZookeeperEmployeeModel>() {
+			@Override
+			public int compare(ZookeeperEmployeeModel o1, ZookeeperEmployeeModel o2) {
+				int id1 = Integer.parseInt(o1.getEmployee_ID().substring(1));
+				int id2 = Integer.parseInt(o2.getEmployee_ID().substring(1));
+				return id1 - id2;
+			}
+		});
+		return result.toArray(new ZookeeperEmployeeModel[result.size()]);
+	}
+
+	public VetEmployeeModel[] getVetEmployeeInfo() {
+		ArrayList<VetEmployeeModel> result = new ArrayList<>();
+		try {
+			Statement stmt = connection.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM ZooEmployee INNER JOIN VetEmployee ON ZooEmployee.employee_id = VetEmployee.employee_id");
+			while(rs.next()) {
+				VetEmployeeModel model = new VetEmployeeModel
+						(rs.getString(1),
+								rs.getString("Name"),
+								rs.getDate("Start_Date"),
+								rs.getDate("End_Date"),
+								rs.getString("On_Duty").charAt(0),
+								rs.getString("On_Call").charAt(0),
+								rs.getInt("Experience"),
+								rs.getString("Specialization"),
+								rs.getString("Phone_Number")
+						);
+				result.add(model);
+			}
+			rs.close();
+			stmt.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+		}
+		result.sort(new Comparator<VetEmployeeModel>() {
+			@Override
+			public int compare(VetEmployeeModel o1, VetEmployeeModel o2) {
+				int id1 = Integer.parseInt(o1.getEmployee_ID().substring(1));
+				int id2 = Integer.parseInt(o2.getEmployee_ID().substring(1));
+				return id1 - id2;
+			}
+		});
+		return result.toArray(new VetEmployeeModel[result.size()]);
+	}
+
+	public ManagerEmployeeModel[] getManagerEmployeeInfo() {
+		ArrayList<ManagerEmployeeModel> result = new ArrayList<>();
+		try {
+			Statement stmt = connection.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM ZooEmployee INNER JOIN ManagerEmployee ON ZooEmployee.employee_id = ManagerEmployee.employee_id");
+			while(rs.next()) {
+				ManagerEmployeeModel model = new ManagerEmployeeModel
+						(rs.getString(1),
+								rs.getString("Name"),
+								rs.getDate("Start_Date"),
+								rs.getDate("End_Date"),
+								rs.getString("On_Duty").charAt(0),
+								rs.getString("In_Office").charAt(0),
+								rs.getInt("Office_#")
+						);
+				result.add(model);
+			}
+			rs.close();
+			stmt.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+		}
+		result.sort(new Comparator<ManagerEmployeeModel>() {
+			@Override
+			public int compare(ManagerEmployeeModel o1, ManagerEmployeeModel o2) {
+				int id1 = Integer.parseInt(o1.getEmployee_ID().substring(1));
+				int id2 = Integer.parseInt(o2.getEmployee_ID().substring(1));
+				return id1 - id2;
+			}
+		});
+		return result.toArray(new ManagerEmployeeModel[result.size()]);
 	}
 
 	public void updateEmployee(ZooEmployeeModel employee) {

@@ -142,13 +142,6 @@ public class UpdateEmployeeDialog extends JFrame implements ActionListener {
         this.setVisible(true);
     }
 
-    public JComboBox<String> createOperatorComboBox() {
-        JComboBox panelCombo = new JComboBox(new String[] {">", ">=", "<", "<=", "=", "<>"});
-        panelCombo.setMaximumSize(new Dimension(20, 20));
-        panelCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
-        return panelCombo;
-    }
-
     public JPanel createTextInputPanel(String labelText) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
@@ -217,22 +210,6 @@ public class UpdateEmployeeDialog extends JFrame implements ActionListener {
         panel.add(datePicker);
 
         datePickers.add(datePicker);
-        return panel;
-    }
-
-    public JPanel createTitlePane() {
-        JPanel panel =  new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
-        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JLabel title = new JLabel();
-        title.setPreferredSize(new Dimension(550, 100));
-        title.setBorder(new EmptyBorder(20, 0, 20, 0));
-        title.setText("Employee Management");
-        title.setFont(new Font("Serif", Font.BOLD, 30));
-        title.setAlignmentX(Component.CENTER_ALIGNMENT);
-        title.setAlignmentY(Component.CENTER_ALIGNMENT);
-        panel.add(title);
-
         return panel;
     }
 
