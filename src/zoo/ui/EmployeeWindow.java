@@ -12,8 +12,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.Vector;
 
 public class EmployeeWindow extends JFrame {
@@ -28,7 +26,7 @@ public class EmployeeWindow extends JFrame {
         this.dbhandler = dbhandler;
         this.table = new JTable();
         addEmployeeDialog = new AddEmployeeDialog(dbhandler, table);
-        updateEmployeeDialog = new UpdateEmployeeDialog();
+        updateEmployeeDialog = new UpdateEmployeeDialog(dbhandler, table);
     }
 
     public void showFrame() {
@@ -42,25 +40,16 @@ public class EmployeeWindow extends JFrame {
         employeeScroll = new JScrollPane(table);
         employeeScroll.setPreferredSize(new Dimension(700, 300));
         employeeScroll.setMaximumSize(new Dimension(700, 300));
-        employeeScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        employeeScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         JPanel selectOptions = new JPanel();
         selectOptions.setLayout(new BoxLayout(selectOptions, BoxLayout.LINE_AXIS));
         selectOptions.setPreferredSize(new Dimension(700, 50));
         selectOptions.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton sharedInfo = new JButton("Shared Info");
         JButton zookeepers = new JButton("Zookeepers");
         JButton vets = new JButton("Vets");
         JButton managers = new JButton("Managers");
 
-        sharedInfo.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                sharedInfo();
-            }
-        });
         zookeepers.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -80,8 +69,6 @@ public class EmployeeWindow extends JFrame {
             }
         });
 
-        selectOptions.add(sharedInfo);
-        selectOptions.add(Box.createRigidArea(new Dimension(10, 0)));
         selectOptions.add(zookeepers);
         selectOptions.add(Box.createRigidArea(new Dimension(10, 0)));
         selectOptions.add(vets);
@@ -108,6 +95,12 @@ public class EmployeeWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 updateEmployeeDialog.showFrame();
+            }
+        });
+        resetView.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sharedInfo();
             }
         });
 
