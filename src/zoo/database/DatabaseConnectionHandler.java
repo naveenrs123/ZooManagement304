@@ -91,9 +91,7 @@ public class DatabaseConnectionHandler {
 		employeeDatabaseHandler.insertVetEmployee(model);
 	}
 
-	public void insertZookeeperEmployee(ZookeeperEmployeeModel model) {
-		employeeDatabaseHandler.insertZookeeperEmployee(model);
-	}
+	public void insertZookeeperEmployee(ZookeeperEmployeeModel model) { employeeDatabaseHandler.insertZookeeperEmployee(model); }
 
 	public void insertManagerEmployee(ManagerEmployeeModel model) {
 		employeeDatabaseHandler.insertManagerEmployee(model);
@@ -106,6 +104,16 @@ public class DatabaseConnectionHandler {
 	public void updateEmployee(ZooEmployeeModel model) {
 		employeeDatabaseHandler.updateEmployee(model);
 	}
+
+	public void updateZookeeper(ZookeeperEmployeeModel model) {
+		employeeDatabaseHandler.updateZooKeeper(model);
+	}
+
+	public void updateVet(VetEmployeeModel model) {
+		employeeDatabaseHandler.updateVet(model);
+	}
+
+	public void updateManager(ManagerEmployeeModel model) { employeeDatabaseHandler.updateManager(model); }
 
 	public void insertAnimal(AnimalModel animalModel) {
 		try {

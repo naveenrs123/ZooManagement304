@@ -359,8 +359,14 @@ public class EmployeeDatabaseHandler {
     public void updateEmployee(ZooEmployeeModel model) {
         String id = model.getEmployee_ID();
         try {
+            PreparedStatement pstmt = connection.prepareStatement("UPDATE ZooEmployee SET END_DATE = ? WHERE Employee_ID = ?");
+            pstmt.setDate(1, model.getEndDate());
+            pstmt.setString(2, id);
+            pstmt.executeUpdate();
+            connection.commit();
+            pstmt.close();
 
-            if (model.getName() != null) {
+            if (!model.getName().equals("")) {
                 PreparedStatement ps = connection.prepareStatement("UPDATE ZooEmployee SET name = ? WHERE Employee_ID = ?");
                 ps.setString(1, model.getName());
                 ps.setString(2, id);
@@ -368,7 +374,7 @@ public class EmployeeDatabaseHandler {
                 connection.commit();
                 ps.close();
 
-            } else if (model.getStartDate() != null) {
+            } if (model.getStartDate() != null) {
                 PreparedStatement ps = connection.prepareStatement("UPDATE ZooEmployee SET start_date = ? WHERE Employee_ID = ?");
                 ps.setDate(1, model.getStartDate());
                 ps.setString(2, id);
@@ -376,9 +382,30 @@ public class EmployeeDatabaseHandler {
                 connection.commit();
                 ps.close();
 
-            } else if (model.getOnDuty() != ' ') {
+            } if (model.getOnDuty() != ' ') {
                 PreparedStatement ps = connection.prepareStatement("UPDATE ZooEmployee SET on_duty = ? WHERE Employee_ID = ?");
                 ps.setString(1, String.valueOf(model.getOnDuty()));
+                ps.setString(2, id);
+                ps.executeUpdate();
+                connection.commit();
+                ps.close();
+
+            }
+
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+    }
+
+    public void updateZooKeeper(ZookeeperEmployeeModel model) {
+        String id = model.getEmployee_ID();
+        updateEmployee(new ZooEmployeeModel(id, model.getName(), model.getStartDate(), model.getEndDate(), model.getOnDuty()));
+        try {
+
+            if (model.getEventDuty() != ' ') {
+                PreparedStatement ps = connection.prepareStatement("UPDATE ZOOKEEPEREMPLOYEE SET EVENT_DUTY = ? WHERE Employee_ID = ?");
+                ps.setString(1, String.valueOf(model.getEventDuty()));
                 ps.setString(2, id);
                 ps.executeUpdate();
                 connection.commit();
@@ -386,7 +413,73 @@ public class EmployeeDatabaseHandler {
             }
 
         } catch (SQLException e) {
-            System.out.println("error");
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+    }
+
+    public void updateVet(VetEmployeeModel model) {
+        String id = model.getEmployee_ID();
+        updateEmployee(new ZooEmployeeModel(id, model.getName(), model.getStartDate(), model.getEndDate(), model.getOnDuty()));
+        try {
+            System.out.println(model.getExperience());
+            if (model.getOnCall() != ' ') {
+                PreparedStatement ps = connection.prepareStatement("UPDATE VETEMPLOYEE SET ON_CALL = ? WHERE Employee_ID = ?");
+                ps.setString(1, String.valueOf(model.getOnCall()));
+                ps.setString(2, id);
+                ps.executeUpdate();
+                connection.commit();
+                ps.close();
+
+            } if (model.getExperience() != -1) {
+                PreparedStatement ps = connection.prepareStatement("UPDATE VETEMPLOYEE SET EXPERIENCE = ? WHERE Employee_ID = ?");
+                ps.setInt(1, model.getExperience());
+                ps.setString(2, id);
+                ps.executeUpdate();
+                connection.commit();
+                ps.close();
+
+            } if (!model.getSpecialization().equals("")) {
+                PreparedStatement ps = connection.prepareStatement("UPDATE VETEMPLOYEE SET ON_CALL = ? WHERE Employee_ID = ?");
+                ps.setString(1, String.valueOf(model.getOnCall()));
+                ps.setString(2, id);
+                ps.executeUpdate();
+                connection.commit();
+                ps.close();
+            }
+
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+    }
+
+    public void updateManager(ManagerEmployeeModel model) {
+        String id = model.getEmployee_ID();
+        updateEmployee(new ZooEmployeeModel(id, model.getName(), model.getStartDate(), model.getEndDate(), model.getOnDuty()));
+        try {
+
+            if (model.getInOffice() != ' ') {
+                PreparedStatement ps = connection.prepareStatement("UPDATE MANAGEREMPLOYEE SET IN_OFFICE = ? WHERE Employee_ID = ?");
+                ps.setString(1, String.valueOf(model.getInOffice()));
+                ps.setString(2, id);
+                ps.executeUpdate();
+                connection.commit();
+                ps.close();
+
+            } if (model.getOfficeNumber() != -1) {
+                PreparedStatement ps = connection.prepareStatement("UPDATE MANAGEREMPLOYEE SET OFFICE_# = ? WHERE Employee_ID = ?");
+                ps.setInt(1, model.getOfficeNumber());
+                ps.setString(2, id);
+                ps.executeUpdate();
+                connection.commit();
+                ps.close();
+
+            }
+
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
         }
     }
 

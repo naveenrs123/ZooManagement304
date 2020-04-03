@@ -11,6 +11,7 @@ import zoo.model.ZookeeperEmployeeModel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -24,6 +25,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Properties;
+import java.util.Vector;
 
 public class UpdateEmployeeDialog extends JFrame {
     DatabaseConnectionHandler dbhandler;
@@ -75,7 +77,7 @@ public class UpdateEmployeeDialog extends JFrame {
         JPanel namePanel = createTextInputPanel("Name");
         JPanel startDatePanel = createDatepickerInputPanel("Start Date");
         JPanel endDatePanel = createDatepickerInputPanel("End Date");
-        JPanel onDutyPanel = createDropdownInputPanel("On Duty", new String[] {"","T", "F"});
+        JPanel onDutyPanel = createDropdownInputPanel("On Duty", new String[] {" ","T", "F"});
 
         allEmployeesInput.add(allEmployeesLabel);
         allEmployeesInput.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -91,7 +93,7 @@ public class UpdateEmployeeDialog extends JFrame {
         vetInput.setAlignmentY(Component.TOP_ALIGNMENT);
 
         JLabel vetLabel = createInfoLabel("Vets");
-        JPanel onCallPanel = createDropdownInputPanel("On Call",  new String[] {"", "T", "F"});
+        JPanel onCallPanel = createDropdownInputPanel("On Call",  new String[] {" ", "T", "F"});
         JPanel experiencePanel = createTextInputPanel("Experience");
         JPanel specializationPanel = createTextInputPanel("Specialization");
         JPanel phoneNumberPanel = createTextInputPanel("Phone Number");
@@ -109,10 +111,10 @@ public class UpdateEmployeeDialog extends JFrame {
         keeperManagerInput.setAlignmentY(Component.TOP_ALIGNMENT);
 
         JLabel zookeeperLabel = createInfoLabel("Zookeepers");
-        JPanel eventDutyPanel = createDropdownInputPanel("Event Duty", new String[] {"", "T", "F"});
+        JPanel eventDutyPanel = createDropdownInputPanel("Event Duty", new String[] {" ", "T", "F"});
 
         JLabel managerLabel = createInfoLabel("Managers");
-        JPanel inOfficePanel = createDropdownInputPanel("In Office",  new String[] {"", "T", "F"});
+        JPanel inOfficePanel = createDropdownInputPanel("In Office",  new String[] {" ", "T", "F"});
         JPanel officeNumberPanel = createTextInputPanel("Office Number");
 
         keeperManagerInput.add(zookeeperLabel);
@@ -148,6 +150,13 @@ public class UpdateEmployeeDialog extends JFrame {
         employeeButtons.add(submit);
         employeeButtons.add(Box.createRigidArea(new Dimension(10, 0)));
         employeeButtons.add(clear);
+
+        submit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateEmployee();
+            }
+        });
 
         clear.addActionListener(new ActionListener() {
             @Override
@@ -224,6 +233,55 @@ public class UpdateEmployeeDialog extends JFrame {
             }
             textFieldList.get(4).setText(Integer.toString(manager.getOfficeNumber()));
         }
+    }
+
+    private void updateEmployee() {
+        String employeeID = ((String) comboBoxList.get(0).getSelectedItem());
+        String name = textFieldList.get(0).getText().trim();
+        Date startDate = getDate(datePickers.get(0));
+        Date endDate = getDate(datePickers.get(1));
+        char onDuty = ((String) comboBoxList.get(1).getSelectedItem()).charAt(0);
+
+        char onCall = ((String) comboBoxList.get(2).getSelectedItem()).charAt(0);
+
+        String experienceString = textFieldList.get(1).getText().trim();
+        int experience = -1;
+        if (!experienceString.equals("")) {
+            experience = Integer.parseInt(experienceString);
+        }
+
+        String specialization = textFieldList.get(2).getText().trim();
+        String phoneNumber = textFieldList.get(3).getText().trim();
+
+        char eventDuty = ((String) comboBoxList.get(3).getSelectedItem()).charAt(0);
+
+        char inOffice = ((String) comboBoxList.get(4).getSelectedItem()).charAt(0);
+
+        String officeNumberString = textFieldList.get(4).getText().trim();
+        int officeNumber = -1;
+        if (!officeNumberString.equals("")) {
+            officeNumber = Integer.parseInt(officeNumberString);
+        }
+
+        if (onCall != ' ') {
+            VetEmployeeModel vetEmployeeModel = new VetEmployeeModel(employeeID, name, startDate, endDate, onDuty, onCall, experience, specialization, phoneNumber);
+            dbhandler.updateVet(vetEmployeeModel);
+        }
+        else if (eventDuty != ' ') {
+            ZookeeperEmployeeModel zookeeperEmployeeModel = new ZookeeperEmployeeModel(employeeID, name, startDate, endDate, onDuty, eventDuty);
+            dbhandler.updateZookeeper(zookeeperEmployeeModel);
+        }
+        else if (inOffice != ' ') {
+            ManagerEmployeeModel managerEmployeeModel = new ManagerEmployeeModel(employeeID, name, startDate, endDate, onDuty, inOffice, officeNumber);
+            dbhandler.updateManager(managerEmployeeModel);
+        }
+        else {
+            ZooEmployeeModel zooEmployeeModel = new ZooEmployeeModel(employeeID, name, startDate, endDate, onDuty);
+            dbhandler.updateEmployee(zooEmployeeModel);
+        }
+
+        sharedInfo();
+
     }
 
     private JTextPane createInfoPanel() {
@@ -333,5 +391,54 @@ public class UpdateEmployeeDialog extends JFrame {
             DateModel<Calendar> dateModel = (DateModel<Calendar>) datePicker.getModel();
             dateModel.setValue(calendar);
         }
+    }
+
+    private Date getDate(JDatePicker datePicker) {
+        if (!datePicker.getModel().isSelected()) {
+            return null;
+        }
+        else {
+            int day = datePicker.getModel().getDay();
+            int month = datePicker.getModel().getMonth() + 1;
+            int year = datePicker.getModel().getYear();
+
+            return Date.valueOf(year + "-" + month + "-" + day);
+        }
+    }
+
+    public void sharedInfo() {
+        DefaultTableModel tableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        Vector<String> columnNames = new Vector<>();
+        columnNames.add("Employee ID");
+        columnNames.add("Name");
+        columnNames.add("Start Date");
+        columnNames.add("End Date");
+        columnNames.add("On Duty?");
+        tableModel.setColumnIdentifiers(columnNames);
+
+        ZooEmployeeModel[] employees = dbhandler.getEmployeeInfo();
+        Vector<String> employeeData;
+        for (ZooEmployeeModel employee: employees) {
+            employeeData = new Vector<>();
+            employeeData.add(employee.getEmployee_ID());
+            employeeData.add(employee.getName());
+            String enddate;
+            if (employee.getEndDate() == null) {
+                enddate = "Currently employed";
+            } else {
+                enddate = employee.getEndDate().toString();
+            }
+            employeeData.add(employee.getStartDate().toString());
+            employeeData.add(enddate);
+            employeeData.add(Character.toString(employee.getOnDuty()));
+            tableModel.addRow(employeeData);
+        }
+        table.setModel(tableModel);
+        tableModel.fireTableDataChanged();
     }
 }
