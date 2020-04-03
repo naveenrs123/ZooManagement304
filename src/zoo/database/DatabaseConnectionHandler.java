@@ -3,6 +3,7 @@ package zoo.database;
 import zoo.model.*;
 
 import java.sql.*;
+import java.sql.Types;
 import java.util.ArrayList;
 
 /**
@@ -172,6 +173,48 @@ public class DatabaseConnectionHandler {
         AnimalModel[] r = result.toArray(new AnimalModel[result.size()]);
 		return r;
     }
+
+    public AnimalModel[] getAnimalTypeInfo(AnimalTypes type) {
+		ArrayList<AnimalModel> result = new ArrayList<AnimalModel>();
+		String animalType;
+		if (type == AnimalTypes.MAMMAL) {
+			animalType = "Mammal";
+		} else if (type == AnimalTypes.AQUATIC) {
+			animalType = "Aquatic";
+		} else if (type == AnimalTypes.AVIAN) {
+			animalType = "Avian";
+		} else if (type == AnimalTypes.INVERTEBRATE) {
+			animalType = "Invertebrate";
+		} else {
+			animalType = "Reptile";
+		}
+		try {
+			PreparedStatement ps = connection.prepareStatement("SELECT Animal_ID, Sex, Species, Age, Name, Pen_Number, Area_ID FROM Animals WHERE Type = ?");
+			ps.setString(1, animalType);
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				AnimalModel model = new AnimalModel
+						(rs.getString("Animal_ID"),
+								null,
+								rs.getString("Sex").charAt(0),
+								rs.getString("Species"),
+								rs.getInt("Age"),
+								rs.getString("Name"),
+								rs.getInt("Pen_Number"),
+								rs.getString("Area_ID").charAt(0)
+						);
+				result.add(model);
+			}
+
+			rs.close();
+			ps.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+		}
+		AnimalModel[] r = result.toArray(new AnimalModel[result.size()]);
+		return r;
+
+	}
 
 
     public FoodModel[] getFoodInfo() {
