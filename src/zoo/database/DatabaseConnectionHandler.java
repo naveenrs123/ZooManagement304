@@ -350,12 +350,12 @@ public class DatabaseConnectionHandler {
                 AnimalModel model = new AnimalModel
                         (rs.getString("Animal_ID"),
                                 rs.getString("Type"),
-                                 (char)rs.getObject("Sex"),
+                                 rs.getString("Sex").charAt(0),
                                 rs.getString("Species"),
                                 rs.getInt("Age"),
                                 rs.getString("Name"),
                                 rs.getInt("Pen_Number"),
-                                (char)rs.getObject("Area_ID")
+                                rs.getString("Area_ID").charAt(0)
                         );
                 result.add(model);
             }
