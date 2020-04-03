@@ -1,7 +1,13 @@
 package zoo.ui;
 
+import org.jdatepicker.DateModel;
 import org.jdatepicker.JDatePicker;
 import org.jdatepicker.UtilCalendarModel;
+import zoo.database.DatabaseConnectionHandler;
+import zoo.model.ManagerEmployeeModel;
+import zoo.model.VetEmployeeModel;
+import zoo.model.ZooEmployeeModel;
+import zoo.model.ZookeeperEmployeeModel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -12,18 +18,36 @@ import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Properties;
 
-public class UpdateEmployeeDialog extends JFrame implements ActionListener {
-    private JButton submit;
-    private JButton clear;
+public class UpdateEmployeeDialog extends JFrame {
+    DatabaseConnectionHandler dbhandler;
+    JTable table;
+    /**
+     * 0: Name, 1: Experience, 2: Specialization, 3: Phone Number
+     * 4: Office Number.
+     */
     ArrayList<JTextField> textFieldList = new ArrayList<>();
+
+    /**
+     * 0: Employee_ID, 1: On Duty, 2: On Call, 3: Event Duty, 4: In Office
+     */
     ArrayList<JComboBox> comboBoxList = new ArrayList<>();
+
+    /**
+     * 0: Start Date, 1: End Date
+     */
     ArrayList<JDatePicker> datePickers = new ArrayList<>();
 
-    public UpdateEmployeeDialog() {
+    public UpdateEmployeeDialog(DatabaseConnectionHandler dbhandler, JTable table) {
         super("Update Employee Information");
+        this.dbhandler = dbhandler;
+        this.table = table;
     }
 
     public void showFrame() {
@@ -34,35 +58,7 @@ public class UpdateEmployeeDialog extends JFrame implements ActionListener {
         this.setSize(900, 450);
         this.setResizable(false);
 
-        JPanel employeeButtons = new JPanel();
-        employeeButtons.setLayout(new BoxLayout(employeeButtons, BoxLayout.LINE_AXIS));
-        employeeButtons.setPreferredSize(new Dimension(800, 50));
-        employeeButtons.setAlignmentX(Component.CENTER_ALIGNMENT);
-        submit = new JButton("Submit");
-        clear = new JButton("Clear Fields");
-        submit.addActionListener(this);
-        clear.addActionListener(this);
-        employeeButtons.add(submit);
-        employeeButtons.add(Box.createRigidArea(new Dimension(10, 0)));
-        employeeButtons.add(clear);
-
-        JTextPane infoPanel = new JTextPane();
-        infoPanel.setOpaque(false);
-        infoPanel.setEditable(false);
-        StyledDocument infoText = infoPanel.getStyledDocument();
-        SimpleAttributeSet center = new SimpleAttributeSet();
-        StyleConstants.setAlignment(center, StyleConstants.ALIGN_LEFT);
-        StyleConstants.setFontSize(center, 16);
-        infoPanel.setCharacterAttributes(center, false);
-        infoText.setParagraphAttributes(0, infoText.getLength(), center, false);
-        try {
-            infoText.insertString(0, "To update employee information, type in the ID of the employee along with the fields" +
-                    " you want to change.\n\nWhen you are done, click the 'Submit Button'. To reset the fields, click the" +
-                    " 'Clear Fields' button.", center);
-        } catch (BadLocationException e) {
-            e.printStackTrace();
-        }
-        infoPanel.setMaximumSize(new Dimension(850, 120));
+        JTextPane infoPanel = createInfoPanel();
 
         JPanel inputsPane = new JPanel();
         inputsPane.setLayout(new BoxLayout(inputsPane, BoxLayout.LINE_AXIS));
@@ -75,7 +71,7 @@ public class UpdateEmployeeDialog extends JFrame implements ActionListener {
         allEmployeesInput.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel allEmployeesLabel = createInfoLabel("All Employees");
-        JPanel employeeIDPanel = createTextInputPanel("Employee ID");
+        JPanel employeeIDPanel = createDropdownInputPanel("Employee ID", dbhandler.getEmployeeIDs());
         JPanel namePanel = createTextInputPanel("Name");
         JPanel startDatePanel = createDatepickerInputPanel("Start Date");
         JPanel endDatePanel = createDatepickerInputPanel("End Date");
@@ -133,6 +129,33 @@ public class UpdateEmployeeDialog extends JFrame implements ActionListener {
         inputsPane.add(vetInput);
         inputsPane.add(keeperManagerInput);
 
+        comboBoxList.get(0).addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Object item = comboBoxList.get(0).getSelectedItem();
+                resetFields();
+                comboBoxList.get(0).setSelectedItem(item);
+                setFields();
+            }
+        });
+
+        JPanel employeeButtons = new JPanel();
+        employeeButtons.setLayout(new BoxLayout(employeeButtons, BoxLayout.LINE_AXIS));
+        employeeButtons.setPreferredSize(new Dimension(800, 50));
+        employeeButtons.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JButton submit = new JButton("Submit");
+        JButton clear = new JButton("Clear Fields");
+        employeeButtons.add(submit);
+        employeeButtons.add(Box.createRigidArea(new Dimension(10, 0)));
+        employeeButtons.add(clear);
+
+        clear.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                resetFields();
+            }
+        });
+
         contentPane.add(Box.createRigidArea(new Dimension(0, 30)));
         contentPane.add(infoPanel);
         contentPane.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -140,6 +163,88 @@ public class UpdateEmployeeDialog extends JFrame implements ActionListener {
         contentPane.add(employeeButtons);
 
         this.setVisible(true);
+    }
+
+    private void resetFields() {
+        for (JTextField field : textFieldList) {
+            field.setText("");
+        }
+        for (JComboBox comboBox : comboBoxList) {
+            comboBox.setSelectedIndex(0);
+        }
+        for (JDatePicker datePicker : datePickers) {
+            datePicker.getFormattedTextField().setText("");
+        }
+    }
+
+    private void setFields() {
+        String id = (String) comboBoxList.get(0).getSelectedItem();
+        ZooEmployeeModel employee = dbhandler.getOneEmployee(id);
+
+        textFieldList.get(0).setText(employee.getName());
+
+        setDate(employee.getStartDate(), datePickers.get(0));
+        setDate(employee.getEndDate(), datePickers.get(1));
+
+        if (employee.getOnDuty() == 'T') {
+            comboBoxList.get(1).setSelectedIndex(1);
+        }
+        else {
+            comboBoxList.get(1).setSelectedIndex(2);
+        }
+
+        VetEmployeeModel vet = dbhandler.getOneVet(id);
+        ZookeeperEmployeeModel zookeeper = dbhandler.getOneZookeeper(id);
+        ManagerEmployeeModel manager = dbhandler.getOneManager(id);
+
+        if (vet != null) {
+            if (vet.getOnCall() == 'T') {
+                comboBoxList.get(2).setSelectedIndex(1);
+            }
+            else {
+                comboBoxList.get(2).setSelectedIndex(2);
+            }
+            textFieldList.get(1).setText(Integer.toString(vet.getExperience()));
+            textFieldList.get(2).setText(vet.getSpecialization());
+            textFieldList.get(3).setText(vet.getPhoneNumber());
+        } else if (zookeeper != null) {
+            if (zookeeper.getEventDuty() == 'T') {
+                comboBoxList.get(3).setSelectedIndex(1);
+            }
+            else {
+                comboBoxList.get(3).setSelectedIndex(2);
+            }
+        }
+        else if (manager != null) {
+            if (manager.getInOffice() == 'T') {
+                comboBoxList.get(4).setSelectedIndex(1);
+            }
+            else {
+                comboBoxList.get(4).setSelectedIndex(2);
+            }
+            textFieldList.get(4).setText(Integer.toString(manager.getOfficeNumber()));
+        }
+    }
+
+    private JTextPane createInfoPanel() {
+        JTextPane infoPanel = new JTextPane();
+        infoPanel.setOpaque(false);
+        infoPanel.setEditable(false);
+        StyledDocument infoText = infoPanel.getStyledDocument();
+        SimpleAttributeSet center = new SimpleAttributeSet();
+        StyleConstants.setAlignment(center, StyleConstants.ALIGN_LEFT);
+        StyleConstants.setFontSize(center, 16);
+        infoPanel.setCharacterAttributes(center, false);
+        infoText.setParagraphAttributes(0, infoText.getLength(), center, false);
+        try {
+            infoText.insertString(0, "To update employee information, type in the ID of the employee along with the fields" +
+                    " you want to change.\n\nWhen you are done, click the 'Submit Button'. To reset the fields, click the" +
+                    " 'Clear Fields' button.", center);
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
+        infoPanel.setMaximumSize(new Dimension(850, 120));
+        return infoPanel;
     }
 
     public JPanel createTextInputPanel(String labelText) {
@@ -221,10 +326,12 @@ public class UpdateEmployeeDialog extends JFrame implements ActionListener {
         return label;
     }
 
-    @Override
-    public void actionPerformed(ActionEvent actionEvent) {
-        if (actionEvent.getSource() == submit) {
-
+    private void setDate(Date date, JDatePicker datePicker) {
+        if (date != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            DateModel<Calendar> dateModel = (DateModel<Calendar>) datePicker.getModel();
+            dateModel.setValue(calendar);
         }
     }
 }

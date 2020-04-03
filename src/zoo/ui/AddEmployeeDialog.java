@@ -208,7 +208,7 @@ public class AddEmployeeDialog extends JFrame {
         }
         else {
             int day = datePicker.getModel().getDay();
-            int month = datePicker.getModel().getMonth();
+            int month = datePicker.getModel().getMonth() + 1;
             int year = datePicker.getModel().getYear();
 
             return Date.valueOf(year + "-" + month + "-" + day);
