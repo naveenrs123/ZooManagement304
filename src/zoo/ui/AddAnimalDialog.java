@@ -50,7 +50,7 @@ public class AddAnimalDialog extends JFrame{
         this.setContentPane(contentPane);
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
 
-        this.setSize(900, 500);
+        this.setSize(700, 400);
         this.setResizable(false);
 
         JTextPane infoPanel = createInfoPanel();
@@ -179,19 +179,6 @@ public class AddAnimalDialog extends JFrame{
         sharedInfo();
     }
 
-    private Date getDate(JDatePicker datePicker) {
-        if (!datePicker.getModel().isSelected()) {
-            return null;
-        }
-        else {
-            int day = datePicker.getModel().getDay();
-            int month = datePicker.getModel().getMonth() + 1;
-            int year = datePicker.getModel().getYear();
-
-            return Date.valueOf(year + "-" + month + "-" + day);
-        }
-    }
-
     private JTextPane createInfoPanel() {
         JTextPane infoPanel = new JTextPane();
         infoPanel.setOpaque(false);
@@ -209,7 +196,7 @@ public class AddAnimalDialog extends JFrame{
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
-        infoPanel.setMaximumSize(new Dimension(850, 200));
+        infoPanel.setMaximumSize(new Dimension(650, 200));
         return infoPanel;
     }
 
@@ -224,7 +211,7 @@ public class AddAnimalDialog extends JFrame{
         panelText.setBorder(new EmptyBorder(0, 0, 0, 10));
 
         JTextField panelField = new JTextField();
-        panelField.setMaximumSize(new Dimension(100, 30));
+        panelField.setMaximumSize(new Dimension(150, 30));
         panelField.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         panel.add(panelText);
@@ -245,7 +232,7 @@ public class AddAnimalDialog extends JFrame{
         panelText.setBorder(new EmptyBorder(0, 0, 0, 10));
 
         JComboBox panelCombo = new JComboBox(choices);
-        panelCombo.setMaximumSize(new Dimension(100, 30));
+        panelCombo.setMaximumSize(new Dimension(150, 30));
         panelCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         panel.add(panelText);
@@ -253,42 +240,6 @@ public class AddAnimalDialog extends JFrame{
 
         comboBoxList.add(panelCombo);
         return panel;
-    }
-
-    public JPanel createDatepickerInputPanel(String labelText) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
-        panel.setBorder(new EmptyBorder(0, 0, 10, 0));
-        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        JLabel panelText = new JLabel(labelText);
-        panelText.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panelText.setBorder(new EmptyBorder(0, 0, 0, 10));
-
-        Properties p = new Properties();
-        p.put("text.today", "Today");
-        p.put("text.month", "Month");
-        p.put("text.year", "Year");
-
-        UtilCalendarModel model = new UtilCalendarModel();
-        JDatePicker datePicker = new JDatePicker(model);
-        datePicker.setMaximumSize(new Dimension(150, 30));
-
-        datePicker.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        panel.add(panelText);
-        panel.add(datePicker);
-
-        datePickers.add(datePicker);
-        return panel;
-    }
-
-    public JLabel createInfoLabel(String text) {
-        JLabel label = new JLabel(text);
-        label.setAlignmentX(Component.LEFT_ALIGNMENT);
-        label.setBorder(new EmptyBorder(0, 0, 0, 5));
-        label.setFont(new Font("Sans Serif", Font.BOLD, 16));
-        return label;
     }
 
     public void sharedInfo() {
