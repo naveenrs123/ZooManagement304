@@ -15,6 +15,7 @@ import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Array;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -30,7 +31,7 @@ public class AddAnimalDialog extends JFrame{
     ArrayList<JTextField> textFieldList = new ArrayList<>();
 
     /**
-     * 0: Type, 1: Sex, 2: Species, 3: Area_ID,Pen_Number
+     * 0: Type, 1: Sex, 2: Species, 3: Area_ID,Pen_Number, 4: Approval Manager
      */
     ArrayList<JComboBox> comboBoxList = new ArrayList<>();
 
@@ -85,14 +86,18 @@ public class AddAnimalDialog extends JFrame{
         animals2.setMaximumSize(new Dimension(300, 300));
         animals2.setAlignmentY(Component.TOP_ALIGNMENT);
 
+        String[] managerIDStrings = getManagerIDs();
+
         JPanel animalSpecies = createDropdownInputPanel("Species", species);
         JPanel agePanel = createTextInputPanel("Age");
         JPanel namePanel = createTextInputPanel("Name");
         JPanel penNumbers = createDropdownInputPanel("Area, Pen", areaPens);
+        JPanel managerIDs = createDropdownInputPanel("Approval Manager", managerIDStrings);
         animals2.add(animalSpecies);
         animals2.add(agePanel);
         animals2.add(namePanel);
         animals2.add(penNumbers);
+        animals2.add(managerIDs);
 
 
         inputsPane.add(Box.createRigidArea(new Dimension(50, 0)));
@@ -124,6 +129,18 @@ public class AddAnimalDialog extends JFrame{
         contentPane.add(animalButtons);
 
         this.setVisible(true);
+    }
+
+    private String[] getManagerIDs() {
+        ManagerEmployeeModel[] managers = dbhandler.getManagerEmployeeInfo();
+        ArrayList<String> managersStringArray = new ArrayList<>();
+        for (ManagerEmployeeModel manager: managers) {
+            String ID = manager.getEmployee_ID();
+            managersStringArray.add(ID);
+        }
+        String[] IDs = new String[managersStringArray.size()];
+        IDs = managersStringArray.toArray(IDs);
+        return IDs;
     }
 
     private String[] getAnimalTypes() {
@@ -162,21 +179,23 @@ public class AddAnimalDialog extends JFrame{
         String species;
         if (speciesString.contains("_")) {
             String[] speciesSplit = comboBoxList.get(2).getSelectedItem().toString().split("_",2);
-            species = speciesSplit[0] + speciesSplit[1];
+            species = speciesSplit[0] + " " + speciesSplit[1];
         } else {
             species = speciesString;
         }
         String[] area_pen = comboBoxList.get(3).getSelectedItem().toString().split(",", 2);
         String area_id = area_pen[0];
         String pen_number = area_pen[1];
-        System.out.println("uwu");
+        String managerID = comboBoxList.get(4).getSelectedItem().toString();
 
-        boolean requirement = (!animalID.equals(" ")) && (!age.equals(" ")) && (!name.equals(" ")) && (!type.equals(" ")) && (!species.equals(" ")) && (!area_id.equals(" ")) && (!pen_number.equals(" "));
+        boolean requirement = (!animalID.equals("")) && (!age.equals("")) && (!name.equals(" ")) && (!type.equals("")) && (!species.equals("")) && (!area_id.equals("")) && (!pen_number.equals(""));
         if (requirement) {
             AnimalModel animal = new AnimalModel(animalID, type, sex.charAt(0), species, Integer.parseInt(age), name, Integer.parseInt(pen_number), area_id.charAt(0));
-            dbhandler.insertAnimal(animal);
+            dbhandler.insertAnimal(animal, managerID);
+            sharedInfo();
+        } else {
+            System.out.println("error");
         }
-        sharedInfo();
     }
 
     private Date getDate(JDatePicker datePicker) {

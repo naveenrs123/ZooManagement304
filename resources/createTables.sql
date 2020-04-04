@@ -90,7 +90,7 @@ CREATE TABLE Animals
     Area_ID    char,
     PRIMARY KEY (Animal_ID),
     FOREIGN KEY (Pen_Number, Area_ID) REFERENCES PenInfo
-)
+);
 
 CREATE TABLE HealthCheckup
 (
