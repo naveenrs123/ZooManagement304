@@ -1,9 +1,9 @@
 package zoo.model;
 
 public enum AnimalTypes {
-    MAMMAL,
-    AVIAN,
-    REPTILE,
-    AQUATIC,
-    INVERTEBRATE
+    Mammal,
+    Avian,
+    Reptile,
+    Aquatic,
+    Invertebrate
 }

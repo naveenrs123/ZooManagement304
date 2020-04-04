@@ -120,12 +120,13 @@ public class DatabaseConnectionHandler {
 			PreparedStatement ps = connection.prepareStatement("INSERT INTO animals VALUES (?,?,?,?,?,?,?,?)");
 			ps.setString(1, animalModel.getAnimalID());
 			ps.setString(2, animalModel.getType());
-			ps.setObject(3, animalModel.getSex(), Types.CHAR);
+			ps.setString(3, String.valueOf(animalModel.getSex()));
 			ps.setString(4, animalModel.getSpecies());
 			ps.setInt(5, animalModel.getAge());
 			ps.setString(6, animalModel.getName());
 			ps.setInt(7, animalModel.getPenNumber());
-			ps.setObject(8, animalModel.getAreaID(), Types.CHAR);
+			ps.setString(8, String.valueOf(animalModel.getAreaID()));
+
 
 			ps.executeUpdate();
 			connection.commit();
@@ -133,6 +134,23 @@ public class DatabaseConnectionHandler {
 		} catch (SQLException e) {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 			rollbackConnection();
+		}
+	}
+
+	public String[] getPenNumbers() {
+		ArrayList<String> result = new ArrayList<>();
+		try {
+			PreparedStatement ps = connection.prepareStatement("SELECT Pen_Number, AREA_ID from PENINFO");
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				String boi = rs.getString("Area_ID") + "," + rs.getInt("Pen_Number");
+				result.add(boi);
+			}
+			String[] result1 = new String[result.size()];
+			result1 = result.toArray(result1);
+			return result1;
+		} catch (SQLException e) {
+			return null;
 		}
 	}
 
@@ -185,13 +203,13 @@ public class DatabaseConnectionHandler {
     public AnimalModel[] getAnimalTypeInfo(AnimalTypes type) {
 		ArrayList<AnimalModel> result = new ArrayList<AnimalModel>();
 		String animalType;
-		if (type == AnimalTypes.MAMMAL) {
+		if (type == AnimalTypes.Mammal) {
 			animalType = "Mammal";
-		} else if (type == AnimalTypes.AQUATIC) {
+		} else if (type == AnimalTypes.Aquatic) {
 			animalType = "Aquatic";
-		} else if (type == AnimalTypes.AVIAN) {
+		} else if (type == AnimalTypes.Avian) {
 			animalType = "Avian";
-		} else if (type == AnimalTypes.INVERTEBRATE) {
+		} else if (type == AnimalTypes.Invertebrate) {
 			animalType = "Invertebrate";
 		} else {
 			animalType = "Reptile";

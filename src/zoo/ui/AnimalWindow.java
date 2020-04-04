@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 import java.util.Vector;
 
 public class AnimalWindow extends JFrame {
-    AddEmployeeDialog addEmployeeDialog;
+    AddAnimalDialog addAnimalDialog;
     UpdateEmployeeDialog updateEmployeeDialog;
     DatabaseConnectionHandler dbhandler;
     JTable table;
@@ -22,7 +22,7 @@ public class AnimalWindow extends JFrame {
         super("Animal Management");
         this.dbhandler = dbhandler;
         this.table = new JTable();
-        addEmployeeDialog = new AddEmployeeDialog(dbhandler, table);
+        addAnimalDialog = new AddAnimalDialog(dbhandler, table);
         updateEmployeeDialog = new UpdateEmployeeDialog(dbhandler, table);
     }
 
@@ -61,31 +61,31 @@ public class AnimalWindow extends JFrame {
         mammals.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                animalTypeInfo(AnimalTypes.MAMMAL);
+                animalTypeInfo(AnimalTypes.Mammal);
             }
         });
         avian.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                animalTypeInfo(AnimalTypes.AVIAN);
+                animalTypeInfo(AnimalTypes.Avian);
             }
         });
         reptile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                animalTypeInfo(AnimalTypes.REPTILE);
+                animalTypeInfo(AnimalTypes.Reptile);
             }
         });
         invertebrate.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                animalTypeInfo(AnimalTypes.INVERTEBRATE);
+                animalTypeInfo(AnimalTypes.Invertebrate);
             }
         });
         aquatic.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                animalTypeInfo(AnimalTypes.AQUATIC);
+                animalTypeInfo(AnimalTypes.Aquatic);
             }
         });
 
@@ -114,7 +114,7 @@ public class AnimalWindow extends JFrame {
         addAnimal.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                addEmployeeDialog.showFrame();
+                addAnimalDialog.showFrame();
             }
         });
         updateAnimal.addActionListener(new ActionListener() {
