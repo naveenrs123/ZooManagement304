@@ -9,6 +9,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class AnimalWindow extends JFrame {
@@ -52,42 +53,12 @@ public class AnimalWindow extends JFrame {
         JButton invertebrate = new JButton("Invertebrates");
         JButton aquatic = new JButton("Aquatic");
 
-        allAnimals.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                sharedInfo();
-            }
-        });
-        mammals.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                animalTypeInfo(AnimalTypes.Mammal);
-            }
-        });
-        avian.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                animalTypeInfo(AnimalTypes.Avian);
-            }
-        });
-        reptile.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                animalTypeInfo(AnimalTypes.Reptile);
-            }
-        });
-        invertebrate.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                animalTypeInfo(AnimalTypes.Invertebrate);
-            }
-        });
-        aquatic.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                animalTypeInfo(AnimalTypes.Aquatic);
-            }
-        });
+        allAnimals.addActionListener(e -> sharedInfo());
+        mammals.addActionListener(e -> animalTypeInfo(AnimalTypes.Mammal));
+        avian.addActionListener(e -> animalTypeInfo(AnimalTypes.Avian));
+        reptile.addActionListener(e -> animalTypeInfo(AnimalTypes.Reptile));
+        invertebrate.addActionListener(e -> animalTypeInfo(AnimalTypes.Invertebrate));
+        aquatic.addActionListener(e -> animalTypeInfo(AnimalTypes.Aquatic));
 
         selectOptions.add(allAnimals);
         selectOptions.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -109,20 +80,11 @@ public class AnimalWindow extends JFrame {
         JButton addAnimal = new JButton("Add Animal");
         JButton updateAnimal = new JButton("Update Animal Info");
         JButton searchAnimals = new JButton("Search");
-        JButton resetView = new JButton("Reset View");
+        JButton typeCounts = new JButton("Animal Count by Type");
 
-        addAnimal.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addAnimalDialog.showFrame();
-            }
-        });
-        updateAnimal.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateAnimalDialog.showFrame();
-            }
-        });
+        addAnimal.addActionListener(e -> addAnimalDialog.showFrame());
+        updateAnimal.addActionListener(e -> updateAnimalDialog.showFrame());
+        typeCounts.addActionListener(e -> displaySelectQuery(dbhandler.animalCountByType()));
 
         animalButtons.add(addAnimal);
         animalButtons.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -130,7 +92,7 @@ public class AnimalWindow extends JFrame {
         animalButtons.add(Box.createRigidArea(new Dimension(10, 0)));
         animalButtons.add(searchAnimals);
         animalButtons.add(Box.createRigidArea(new Dimension(10, 0)));
-        animalButtons.add(resetView);
+        animalButtons.add(typeCounts);
 
         contentPane.add(titlePane);
         contentPane.add(animalScroll);
@@ -228,5 +190,24 @@ public class AnimalWindow extends JFrame {
         panel.add(title);
 
         return panel;
+    }
+
+    public void displaySelectQuery(SelectModel model) {
+        DefaultTableModel tableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        Vector<String> columnNames = new Vector<>(model.getSelectedColumns());
+        tableModel.setColumnIdentifiers(columnNames);
+
+        ArrayList<ArrayList<String>> rowdata = model.getRowData();
+        for (ArrayList<String> row : rowdata) {
+            Vector<String> singleRow = new Vector<>(row);
+            tableModel.addRow(singleRow);
+        }
+        table.setModel(tableModel);
+        tableModel.fireTableDataChanged();
     }
 }

@@ -1,9 +1,6 @@
 package zoo.database;
 
-import zoo.model.AnimalModel;
-import zoo.model.AnimalRelocationModel;
-import zoo.model.AnimalTypes;
-import zoo.model.Species;
+import zoo.model.*;
 
 import javax.swing.*;
 import java.sql.*;
@@ -17,6 +14,28 @@ public class AnimalDatabaseHandler {
 
     public AnimalDatabaseHandler(Connection connection) {
         this.connection = connection;
+    }
+
+    public SelectModel animalCountByType() {
+        ArrayList<String> projectionColumns = new ArrayList<>(Arrays.asList("Type", "Count"));
+        ArrayList<ArrayList<String>> rowData = new ArrayList<>();
+        try {
+            String query = "SELECT Type, Count(Type) FROM Animals GROUP BY Type";
+            PreparedStatement ps = connection.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                ArrayList<String> row = new ArrayList<>();
+                row.add(rs.getString("Type"));
+                row.add(Integer.toString(rs.getInt(2)));
+                rowData.add(row);
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            rollbackConnection();
+        }
+        return new SelectModel(projectionColumns, rowData);
     }
 
     public void insertAnimal(AnimalModel animalModel, String managerID) {
@@ -35,7 +54,7 @@ public class AnimalDatabaseHandler {
             connection.commit();
             long millis=System.currentTimeMillis();
             Date date=new java.sql.Date(millis);
-            String relocationID = "R" + Integer.toString(getNextRelocationNumber());
+            String relocationID = "R" + getNextRelocationNumber();
             AnimalRelocationModel relocation = new AnimalRelocationModel(relocationID, managerID, animalModel.getAnimalID(), null, null, Integer.toString(animalModel.getPenNumber()), Character.toString(animalModel.getAreaID()), date);
             insertAnimalRelocation(relocation);
             ps.close();

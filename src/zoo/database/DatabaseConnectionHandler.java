@@ -146,6 +146,22 @@ public class DatabaseConnectionHandler {
 		return employeeDatabaseHandler.searchManagerEmployees(mmodel, selectedColumns, conditions);
 	}
 
+	public SelectModel getExperiencedOnCallVet() {
+		return employeeDatabaseHandler.getExperiencedOnCallVet();
+	}
+
+	public SelectModel getZookeepersWhoCleanedAllPens(char area_ID) {
+		return employeeDatabaseHandler.getZookeepersWhoCleanedAllPens(area_ID);
+	}
+
+	public Character[] getAreaIDs() {
+		return employeeDatabaseHandler.getAreaIDs();
+	}
+
+	public SelectModel animalCountByType() {
+		return animalDatabaseHandler.animalCountByType();
+	}
+
 	public String[] getAnimalIDs() {
 		return animalDatabaseHandler.getAnimalIDs();
 	}

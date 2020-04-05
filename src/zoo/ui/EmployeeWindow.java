@@ -10,8 +10,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Vector;
 
@@ -19,6 +17,7 @@ public class EmployeeWindow extends JFrame {
     AddEmployeeDialog addEmployeeDialog;
     UpdateEmployeeDialog updateEmployeeDialog;
     SearchEmployeeDialog searchEmployeeDialog;
+    AdvancedEmployeeDialog advancedEmployeeDialog;
     DatabaseConnectionHandler dbhandler;
     JTable table;
     JScrollPane employeeScroll;
@@ -30,6 +29,7 @@ public class EmployeeWindow extends JFrame {
         addEmployeeDialog = new AddEmployeeDialog(dbhandler, table);
         updateEmployeeDialog = new UpdateEmployeeDialog(dbhandler, table);
         searchEmployeeDialog = new SearchEmployeeDialog(dbhandler, table);
+        advancedEmployeeDialog = new AdvancedEmployeeDialog(dbhandler, table);
     }
 
     public void showFrame() {
@@ -81,7 +81,7 @@ public class EmployeeWindow extends JFrame {
         addEmployee.addActionListener(e -> addEmployeeDialog.showFrame());
         updateEmployee.addActionListener(e -> updateEmployeeDialog.showFrame());
         searchEmployees.addActionListener(e -> searchEmployeeDialog.showFrame());
-
+        advanced.addActionListener(e -> advancedEmployeeDialog.showFrame());
 
         employeeButtons.add(addEmployee);
         employeeButtons.add(Box.createRigidArea(new Dimension(10, 0)));
