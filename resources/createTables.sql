@@ -72,7 +72,7 @@ CREATE TABLE PenCleaning
     Pen_Number       number,
     Area_ID          char(1),
     Date_of_cleaning date NOT NULL,
-    PRIMARY KEY (Employee_ID, Pen_Number, Area_ID),
+    PRIMARY KEY (Date_of_cleaning, Pen_Number, Area_ID),
     FOREIGN KEY (Employee_ID) REFERENCES ZookeeperEmployee (Employee_ID),
     FOREIGN KEY (Pen_Number, Area_ID) REFERENCES PenInfo
         ON DELETE CASCADE

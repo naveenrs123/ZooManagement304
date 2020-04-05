@@ -368,6 +368,36 @@ public class AnimalDatabaseHandler {
         return result.toArray(new AnimalModel[result.size()]);
     }
 
+    public AnimalModel[] getAnimalsInPenArea(int PenNumber, char AreaID) {
+        ArrayList<AnimalModel> result = new ArrayList<>();
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT * from ANIMALS WHERE PEN_NUMBER = ? AND AREA_ID = ?");
+            ps.setInt(1, PenNumber);
+            ps.setString(2, Character.toString(AreaID));
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()) {
+                AnimalModel model = new AnimalModel
+                        (rs.getString("Animal_ID"),
+                                rs.getString("Type"),
+                                rs.getString("Sex").charAt(0),
+                                rs.getString("Species"),
+                                rs.getInt("Age"),
+                                rs.getString("Name"),
+                                rs.getInt("Pen_Number"),
+                                rs.getString("Area_ID").charAt(0)
+                        );
+                result.add(model);
+            }
+
+            rs.close();
+            ps.close();
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+        return result.toArray(new AnimalModel[result.size()]);
+    }
+
     private void rollbackConnection() {
         try  {
             connection.rollback();

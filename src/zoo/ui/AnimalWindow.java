@@ -197,7 +197,6 @@ public class AnimalWindow extends JFrame {
         tableModel.setColumnIdentifiers(columnNames);
         AnimalModel[] animals = dbhandler.getAnimalTypeInfo(type);
 
-        ZookeeperEmployeeModel[] employees = dbhandler.getZookeeperEmployeeInfo();
         Vector<String> animalData;
         for (AnimalModel animal: animals) {
             animalData = new Vector<>();

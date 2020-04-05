@@ -747,6 +747,18 @@ public class EmployeeDatabaseHandler {
         return IDs;
     }
 
+    public String[] getZooKeeperIDs() {
+        ZookeeperEmployeeModel[] zookeepers = getZookeeperEmployeeInfo();
+        ArrayList<String> zookeeperStringArray = new ArrayList<>();
+        for (ZookeeperEmployeeModel zookeeper: zookeepers) {
+            String ID = zookeeper.getEmployee_ID();
+            zookeeperStringArray.add(ID);
+        }
+        String[] IDs = new String[zookeeperStringArray.size()];
+        IDs = zookeeperStringArray.toArray(IDs);
+        return IDs;
+    }
+
     public ManagerEmployeeModel[] getManagerEmployeeInfo() {
         ArrayList<ManagerEmployeeModel> result = new ArrayList<>();
         try {
