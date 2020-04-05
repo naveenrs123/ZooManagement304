@@ -154,6 +154,10 @@ public class DatabaseConnectionHandler {
 		return employeeDatabaseHandler.getAreaIDs();
 	}
 
+	public SelectModel animalCountByType() {
+		return animalDatabaseHandler.animalCountByType();
+	}
+
 	public String[] getAnimalIDs() {
 		return animalDatabaseHandler.getAnimalIDs();
 	}
