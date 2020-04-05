@@ -82,18 +82,18 @@ INSERT INTO AnimalRelocation VALUES ('R5', 'E15', 'A5', 3, 'C', 4, 'D', TO_DATE(
 
 INSERT INTO Food VALUES ('F1', 'Pellets', 1000);
 INSERT INTO Food VALUES ('F2', 'Steak', 90);
-INSERT INTO Food VALUES ('F3', 'Ferns', 300);
-INSERT INTO Food VALUES ('F4', 'Carrots', 250);
-INSERT INTO Food VALUES ('F5', 'Squid', 148);
-INSERT INTO Food VALUES ('F6', 'Fruit and Seed Mix', 509);
-INSERT INTO Food VALUES ('F7', 'Dried Insects', 94);
-INSERT INTO Food VALUES ('F8', 'Liver', 650);
+    INSERT INTO Food VALUES ('F3', 'Ferns', 300);
+    INSERT INTO Food VALUES ('F4', 'Carrots', 250);
+    INSERT INTO Food VALUES ('F5', 'Squid', 148);
+    INSERT INTO Food VALUES ('F6', 'Fruit and Seed Mix', 509);
+    INSERT INTO Food VALUES ('F7', 'Dried Insects', 94);
+    INSERT INTO Food VALUES ('F8', 'Liver', 650);
 
-INSERT INTO FoodPreferences VALUES ('Giraffe', 'Ferns');
-INSERT INTO FoodPreferences VALUES ('Parrot', 'Fruit and Seed Mix');
-INSERT INTO FoodPreferences VALUES ('Lion', 'Steak');
-INSERT INTO FoodPreferences VALUES ('Polar Bear', 'Liver');
-INSERT INTO FoodPreferences VALUES ('Chameleon', 'Dried Insects');
+    INSERT INTO FoodPreferences VALUES ('Giraffe', 'Ferns');
+    INSERT INTO FoodPreferences VALUES ('Parrot', 'Fruit and Seed Mix');
+    INSERT INTO FoodPreferences VALUES ('Lion', 'Steak');
+    INSERT INTO FoodPreferences VALUES ('Polar Bear', 'Liver');
+    INSERT INTO FoodPreferences VALUES ('Chameleon', 'Dried Insects');
 
 INSERT INTO Feeding VALUES ('F3', 'A1', 'E1', 100, TO_TIMESTAMP('2020-03-27 19:33:00', 'YYYY-MM-DD HH24:MI:SS'));
 INSERT INTO Feeding VALUES ('F3', 'A1', 'E2', 50, TO_TIMESTAMP('2020-03-25 19:34:00', 'YYYY-MM-DD HH24:MI:SS'));
