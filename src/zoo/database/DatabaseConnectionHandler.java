@@ -6,6 +6,7 @@ import java.sql.*;
 import java.sql.Types;
 import java.util.ArrayList;
 
+
 /**
  * This class handles all database related transactions
  */
@@ -131,7 +132,7 @@ public class DatabaseConnectionHandler {
 		return employeeDatabaseHandler.searchManagerEmployees(mmodel, selectedColumns, conditions);
 	}
 
-	public void insertAnimal(AnimalModel animalModel) {
+	public void insertAnimal(AnimalModel animalModel, String managerID) {
 		try {
 			PreparedStatement ps = connection.prepareStatement("INSERT INTO animals VALUES (?,?,?,?,?,?,?,?)");
 			ps.setString(1, animalModel.getAnimalID());
@@ -143,13 +144,127 @@ public class DatabaseConnectionHandler {
 			ps.setInt(7, animalModel.getPenNumber());
 			ps.setString(8, String.valueOf(animalModel.getAreaID()));
 
-
 			ps.executeUpdate();
 			connection.commit();
+			long millis=System.currentTimeMillis();
+			Date date=new java.sql.Date(millis);
+			String relocationID = "R" + Integer.toString(getNextRelocationNumber());
+			AnimalRelocationModel relocation = new AnimalRelocationModel(relocationID, managerID, animalModel.getAnimalID(), null, null, Integer.toString(animalModel.getPenNumber()), Character.toString(animalModel.getAreaID()), date);
+			insertAnimalRelocation(relocation);
 			ps.close();
 		} catch (SQLException e) {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 			rollbackConnection();
+		}
+	}
+
+	public void insertAnimalRelocation(AnimalRelocationModel relocation) {
+			try {
+				determinePenAvailability(relocation.getTo_Pen_ID(), relocation.getTo_Area_ID(), relocation.getTo_Pen_ID(), relocation.getTo_Area_ID());
+				PreparedStatement ps = connection.prepareStatement("INSERT INTO ANIMALRELOCATION VALUES(?,?,?,?,?,?,?,?)");
+				ps.setString(1, relocation.getRelocation_ID());
+				ps.setString(2, relocation.getEmployee_ID());
+				ps.setString(3, relocation.getAnimal_ID());
+				if (relocation.getFrom_Pen_ID() == null || relocation.getFrom_Area_ID() == null) {
+					ps.setNull(4, java.sql.Types.INTEGER);
+					ps.setString(5, null);
+				} else {
+					ps.setInt(4, Integer.parseInt(relocation.getFrom_Pen_ID()));
+					ps.setString(5, relocation.getFrom_Area_ID());
+				}
+				if (relocation.getTo_Pen_ID() == null || relocation.getTo_Area_ID() == null) {
+					ps.setNull(6, Types.INTEGER);
+					ps.setString(7, null);
+				} else {
+					ps.setInt(6, Integer.parseInt(relocation.getTo_Pen_ID()));
+					ps.setString(7, relocation.getTo_Area_ID());
+				}
+				ps.setDate(8, relocation.getRelocationDate());
+				ps.executeUpdate();
+				connection.commit();
+				ps.close();
+			} catch (SQLException e) {
+				System.out.println("SQL exception");
+				e.getSQLState();
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+				e.getCause();
+				System.out.println("pen is full");
+			}
+		}
+
+	public void determinePenAvailability(String to_PenNumber, String to_AreaID, String from_PenNumber, String from_AreaID) throws Exception {
+		try {
+			if ((to_PenNumber != null ) && (to_AreaID != null))  {
+				PreparedStatement ps = connection.prepareStatement("SELECT PENSIZE, OCCUPANCY from PENINFO WHERE PEN_NUMBER = ? AND AREA_ID = ?");
+				ps.setInt(1, Integer.parseInt(to_PenNumber));
+				ps.setString(2, to_AreaID);
+				ResultSet rs = ps.executeQuery();
+				int newOccupancy;
+				int occupancy = 0;
+				int size = 0;
+				while(rs.next()) {
+					size = rs.getInt(1);
+					occupancy = rs.getInt(2);
+				}
+				ps.close();
+				if (occupancy + 1 > size) {
+					throw new Exception();
+				}
+				newOccupancy = occupancy + 1;
+				PreparedStatement ps2 = connection.prepareStatement("UPDATE PENINFO SET OCCUPANCY = ? WHERE PEN_NUMBER = ? AND AREA_ID = ?");
+				ps2.setInt(1, newOccupancy);
+				ps2.setInt(2, Integer.parseInt(to_PenNumber));
+				ps2.setString(3, to_AreaID);
+				ps2.executeUpdate();
+				connection.commit();
+				ps2.close();
+			}
+
+			if ((from_PenNumber != null) && (from_AreaID != null)) {
+				PreparedStatement ps = connection.prepareStatement("SELECT OCCUPANCY from PENINFO WHERE PEN_NUMBER = ? AND AREA_ID = ?");
+				ps.setInt(1, Integer.parseInt(from_PenNumber));
+				ps.setString(2, from_AreaID);
+				ResultSet rs = ps.executeQuery();
+				int occupancy = 0;
+				while(rs.next()) {
+					occupancy = rs.getInt(1);
+				}
+				ps.close();
+				int newOccupancy = occupancy - 1;
+				PreparedStatement ps3 = connection.prepareStatement("UPDATE PENINFO SET OCCUPANCY = ? WHERE PEN_NUMBER = ? AND AREA_ID = ?");
+				ps3.setInt(1, newOccupancy);
+				ps3.setInt(2, Integer.parseInt(from_PenNumber));
+				ps3.setString(3, from_AreaID);
+				ps3.executeUpdate();
+				connection.commit();
+				ps3.close();
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			e.getErrorCode();
+			e.getSQLState();
+			System.out.println("error");
+
+		}
+	}
+
+	public int getNextRelocationNumber() {
+		try {
+			PreparedStatement ps = connection.prepareStatement("Select RELOCATION_ID from ANIMALRELOCATION");
+			ResultSet rs = ps.executeQuery();
+			int max = -1;
+			while (rs.next()) {
+				int value = Integer.parseInt(rs.getString(1).substring(1));
+				if (value > max) {
+					max = value;
+				}
+			}
+			return max+1;
+		} catch (SQLException e) {
+			return 0;
 		}
 	}
 
@@ -162,6 +277,7 @@ public class DatabaseConnectionHandler {
 				String boi = rs.getString("Area_ID") + "," + rs.getInt("Pen_Number");
 				result.add(boi);
 			}
+			ps.close();
 			String[] result1 = new String[result.size()];
 			result1 = result.toArray(result1);
 			return result1;
