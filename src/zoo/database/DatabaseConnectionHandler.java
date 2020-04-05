@@ -115,6 +115,22 @@ public class DatabaseConnectionHandler {
 
 	public void updateManager(ManagerEmployeeModel model) { employeeDatabaseHandler.updateManager(model); }
 
+	public SelectModel searchEmployees(ZooEmployeeModel model, ArrayList<Boolean> selectedColumns, ArrayList<String> conditions) {
+		return employeeDatabaseHandler.searchEmployees(model, selectedColumns, conditions);
+	}
+
+	public SelectModel searchVetEmployees(VetEmployeeModel vmodel, ArrayList<Boolean> selectedColumns, ArrayList<String> conditions) {
+		return employeeDatabaseHandler.searchVetEmployees(vmodel, selectedColumns, conditions);
+	}
+
+	public SelectModel searchZookeeperEmployees(ZookeeperEmployeeModel zmodel, ArrayList<Boolean> selectedColumns, ArrayList<String> conditions) {
+		return employeeDatabaseHandler.searchZookeeperEmployees(zmodel, selectedColumns, conditions);
+	}
+
+	public SelectModel searchManagerEmployees(ManagerEmployeeModel mmodel, ArrayList<Boolean> selectedColumns, ArrayList<String> conditions) {
+		return employeeDatabaseHandler.searchManagerEmployees(mmodel, selectedColumns, conditions);
+	}
+
 	public void insertAnimal(AnimalModel animalModel) {
 		try {
 			PreparedStatement ps = connection.prepareStatement("INSERT INTO animals VALUES (?,?,?,?,?,?,?,?)");
@@ -173,7 +189,7 @@ public class DatabaseConnectionHandler {
 	}
 
     public AnimalModel[] getAnimalInfo() {
-        ArrayList<AnimalModel> result = new ArrayList<AnimalModel>();
+        ArrayList<AnimalModel> result = new ArrayList<>();
         try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM Animals");
@@ -196,12 +212,11 @@ public class DatabaseConnectionHandler {
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
-        AnimalModel[] r = result.toArray(new AnimalModel[result.size()]);
-		return r;
+		return result.toArray(new AnimalModel[result.size()]);
     }
 
     public AnimalModel[] getAnimalTypeInfo(AnimalTypes type) {
-		ArrayList<AnimalModel> result = new ArrayList<AnimalModel>();
+		ArrayList<AnimalModel> result = new ArrayList<>();
 		String animalType;
 		if (type == AnimalTypes.Mammal) {
 			animalType = "Mammal";
@@ -237,14 +252,13 @@ public class DatabaseConnectionHandler {
 		} catch (SQLException e) {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 		}
-		AnimalModel[] r = result.toArray(new AnimalModel[result.size()]);
-		return r;
+		return result.toArray(new AnimalModel[result.size()]);
 
 	}
 
 
     public FoodModel[] getFoodInfo() {
-        ArrayList<FoodModel> result = new ArrayList<FoodModel>();
+        ArrayList<FoodModel> result = new ArrayList<>();
         try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM Food");
