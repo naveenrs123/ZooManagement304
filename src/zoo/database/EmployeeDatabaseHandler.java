@@ -22,8 +22,81 @@ public class EmployeeDatabaseHandler {
     private ArrayList<String> charColumns = new ArrayList<>(Arrays.asList("On_Duty", "On_Call", "Event_Duty", "In_Office"));
 
 
-    public EmployeeDatabaseHandler(Connection  connection) {
+    public EmployeeDatabaseHandler(Connection connection) {
         this.connection = connection;
+    }
+
+    public Character[] getAreaIDs() {
+        ArrayList<Character> areaIDs = new ArrayList<>();
+         try {
+            String query = "SELECT Area_ID FROM Area";
+            PreparedStatement ps = connection.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                areaIDs.add(rs.getString("Area_ID").charAt(0));
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, EXCEPTION_TAG + " " + e.getMessage());
+            e.printStackTrace();
+            rollbackConnection();
+        }
+        return areaIDs.toArray(new Character[areaIDs.size()]);
+    }
+
+    public SelectModel getZookeepersWhoCleanedAllPens(char area_ID) {
+        ArrayList<String> projectionColumns = new ArrayList<>(Arrays.asList("Employee ID", "Name"));
+        ArrayList<ArrayList<String>> rowData = new ArrayList<>();
+        try {
+            String query = "SELECT z.Employee_ID, z.Name FROM ZOOEMPLOYEE z WHERE NOT EXISTS (SELECT * FROM PenInfo p " +
+                    "WHERE p.AREA_ID = ? AND NOT EXISTS (SELECT pc.Employee_ID FROM PenCleaning pc " +
+                    "WHERE pc.Employee_ID = z.Employee_ID AND p.Pen_Number = pc.Pen_Number AND p.Area_ID = pc.Area_ID))";
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setString(1, String.valueOf(area_ID));
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                ArrayList<String> row = new ArrayList<>();
+                row.add(rs.getString("Employee_ID"));
+                row.add(rs.getString("Name"));
+                rowData.add(row);
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, EXCEPTION_TAG + " " + e.getMessage());
+            e.printStackTrace();
+            rollbackConnection();
+        }
+        return new SelectModel(projectionColumns, rowData);
+    }
+
+    public SelectModel getExperiencedOnCallVet() {
+        ArrayList<String> projectionColumns = new ArrayList<>(Arrays.asList("Employee ID", "Name", "Phone Number", "Experience"));
+        ArrayList<ArrayList<String>> rowData = new ArrayList<>();
+        try {
+            String query = "SELECT z.Employee_ID, z.Name, v.Phone_Number, v.Experience " +
+                    "FROM ZooEmployee z, VetEmployee v " +
+                    "WHERE z.On_Duty = 'T' AND v.On_Call = 'T' AND z.Employee_ID = v.Employee_ID " +
+                    "AND v.Experience = (SELECT MAX(Experience) FROM VetEmployee)";
+            PreparedStatement ps = connection.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                ArrayList<String> row = new ArrayList<>();
+                row.add(rs.getString("Employee_ID"));
+                row.add(rs.getString("Name"));
+                row.add(rs.getString("Phone_Number"));
+                row.add(Integer.toString(rs.getInt("Experience")));
+                rowData.add(row);
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, EXCEPTION_TAG + " " + e.getMessage());
+            e.printStackTrace();
+            rollbackConnection();
+        }
+        return new SelectModel(projectionColumns, rowData);
     }
 
     public SelectModel searchVetEmployees(VetEmployeeModel vmodel, ArrayList<Boolean> selectedColumns, ArrayList<String> conditions) {
@@ -137,7 +210,8 @@ public class EmployeeDatabaseHandler {
                 }
                 rowData.add(row);
             }
-
+            rs.close();
+            ps.close();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
@@ -207,7 +281,6 @@ public class EmployeeDatabaseHandler {
         }
 
         query.append("z.employee_id = zk.employee_id");
-        System.out.println(query);
 
         try {
             PreparedStatement ps = connection.prepareStatement(query.toString());
@@ -244,7 +317,8 @@ public class EmployeeDatabaseHandler {
                 }
                 rowData.add(row);
             }
-
+            rs.close();
+            ps.close();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
@@ -355,7 +429,8 @@ public class EmployeeDatabaseHandler {
                 }
                 rowData.add(row);
             }
-
+            rs.close();
+            ps.close();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
@@ -451,7 +526,8 @@ public class EmployeeDatabaseHandler {
                 }
                 rowData.add(row);
             }
-
+            rs.close();
+            ps.close();
         } catch (SQLException e) {
             e.printStackTrace();
             rollbackConnection();
@@ -934,7 +1010,6 @@ public class EmployeeDatabaseHandler {
         String id = model.getEmployee_ID();
         updateEmployee(new ZooEmployeeModel(id, model.getName(), model.getStartDate(), model.getEndDate(), model.getOnDuty()));
         try {
-            System.out.println(model.getExperience());
             if (model.getOnCall() != ' ') {
                 PreparedStatement ps = connection.prepareStatement("UPDATE VETEMPLOYEE SET ON_CALL = ? WHERE Employee_ID = ?");
                 ps.setString(1, String.valueOf(model.getOnCall()));
@@ -952,8 +1027,15 @@ public class EmployeeDatabaseHandler {
                 ps.close();
 
             } if (!model.getSpecialization().equals("")) {
-                PreparedStatement ps = connection.prepareStatement("UPDATE VETEMPLOYEE SET ON_CALL = ? WHERE Employee_ID = ?");
-                ps.setString(1, String.valueOf(model.getOnCall()));
+                PreparedStatement ps = connection.prepareStatement("UPDATE VETEMPLOYEE SET SPECIALIZATION = ? WHERE Employee_ID = ?");
+                ps.setString(1, model.getSpecialization());
+                ps.setString(2, id);
+                ps.executeUpdate();
+                connection.commit();
+                ps.close();
+            } if (!model.getPhoneNumber().equals("")) {
+                PreparedStatement ps = connection.prepareStatement("UPDATE VETEMPLOYEE SET PHONE_NUMBER = ? WHERE Employee_ID = ?");
+                ps.setString(1, model.getPhoneNumber());
                 ps.setString(2, id);
                 ps.executeUpdate();
                 connection.commit();

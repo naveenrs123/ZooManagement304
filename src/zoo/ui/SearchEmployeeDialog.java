@@ -206,6 +206,8 @@ public class SearchEmployeeDialog extends JFrame {
         for (int i = 1; i < checkBoxes.size(); i++) {
             checkBoxes.get(i).setSelected(false);
         }
+        checkBoxes.get(0).setSelected(true);
+
         vetCheckbox.setSelected(false);
         zookeeperCheckbox.setSelected(false);
         managerCheckbox.setSelected(false);
