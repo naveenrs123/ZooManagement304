@@ -17,6 +17,7 @@ import java.util.Vector;
 public class EmployeeWindow extends JFrame {
     AddEmployeeDialog addEmployeeDialog;
     UpdateEmployeeDialog updateEmployeeDialog;
+    SearchEmployeeDialog searchEmployeeDialog;
     DatabaseConnectionHandler dbhandler;
     JTable table;
     JScrollPane employeeScroll;
@@ -27,6 +28,7 @@ public class EmployeeWindow extends JFrame {
         this.table = new JTable();
         addEmployeeDialog = new AddEmployeeDialog(dbhandler, table);
         updateEmployeeDialog = new UpdateEmployeeDialog(dbhandler, table);
+        searchEmployeeDialog = new SearchEmployeeDialog(dbhandler, table);
     }
 
     public void showFrame() {
@@ -95,6 +97,12 @@ public class EmployeeWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 updateEmployeeDialog.showFrame();
+            }
+        });
+        searchEmployees.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchEmployeeDialog.showFrame();
             }
         });
         resetView.addActionListener(new ActionListener() {

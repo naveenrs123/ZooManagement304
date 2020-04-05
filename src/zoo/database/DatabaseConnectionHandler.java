@@ -115,6 +115,10 @@ public class DatabaseConnectionHandler {
 
 	public void updateManager(ManagerEmployeeModel model) { employeeDatabaseHandler.updateManager(model); }
 
+	public SelectModel searchEmployees(ZooEmployeeModel model, ArrayList<Boolean> selectedColumns, ArrayList<String> conditions) {
+		return employeeDatabaseHandler.searchEmployees(model, selectedColumns, conditions);
+	}
+
 	public void insertAnimal(AnimalModel animalModel) {
 		try {
 			PreparedStatement ps = connection.prepareStatement("INSERT INTO animals VALUES (?,?,?,?,?,?,?,?)");

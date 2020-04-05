@@ -1,23 +1,181 @@
 package zoo.database;
 
-import oracle.jdbc.proxy.annotation.Pre;
-import zoo.model.ManagerEmployeeModel;
-import zoo.model.VetEmployeeModel;
-import zoo.model.ZooEmployeeModel;
-import zoo.model.ZookeeperEmployeeModel;
+import zoo.model.*;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 
 public class EmployeeDatabaseHandler {
     private static final String EXCEPTION_TAG = "[EXCEPTION]";
     private static final String WARNING_TAG = "[WARNING]";
     private Connection connection;
+    ArrayList<String> employeeColumns = new ArrayList(Arrays.asList("Employee_ID", "Name", "Start_Date", "End_Date", "On_Duty", "On_Call", "Experience", "Specialization", "Phone_Number", "Event_Duty", "In_Office", "Office_#"));
+    ArrayList<String> stringColumns = new ArrayList(Arrays.asList("Employee_ID", "Name", "Specialization", "Phone_Number"));
+    ArrayList<String> dateColumns = new ArrayList(Arrays.asList("Start_Date", "End_Date"));
+    ArrayList<String> intColumns = new ArrayList(Arrays.asList("Experience", "Office_#"));
+    ArrayList<String> charColumns = new ArrayList(Arrays.asList("On_Duty", "On_Call", "Event_Duty", "In_Office"));
 
 
     public EmployeeDatabaseHandler(Connection  connection) {
         this.connection = connection;
+    }
+
+    public SelectModel searchEmployees(ZooEmployeeModel model, ArrayList<Boolean> selectedColumns, ArrayList<String> conditions) {
+        SelectModel result;
+        ArrayList<ArrayList<String>> rowData = new ArrayList<>();
+        ArrayList<String> projectionColumns = new ArrayList<>();
+
+        String query = "SELECT ";
+        for (int i = 0; i < 5; i++) {
+            if (selectedColumns.get(i)) {
+                projectionColumns.add(employeeColumns.get(i));
+                query += employeeColumns.get(i) + ",";
+            }
+        }
+        query = query.substring(0, query.length()-1);
+        query += " FROM ZooEmployee WHERE ";
+
+        ArrayList<String> whereColumns = new ArrayList<>();
+
+        if (!model.getEmployee_ID().equals("")) {
+            query += employeeColumns.get(0) + " LIKE" + " ?" + " AND ";
+            whereColumns.add(employeeColumns.get(0));
+        }
+
+        if (!model.getName().equals("")) {
+            query += employeeColumns.get(1) + " LIKE" + " ?" + " AND ";
+            whereColumns.add(employeeColumns.get(1));
+        }
+
+        if (model.getStartDate() != null) {
+            query += employeeColumns.get(2) + " " + conditions.get(0) + " ? AND ";
+            whereColumns.add(employeeColumns.get(2));
+        }
+
+        boolean isEndDateSearched = model.getEndDate() != null || selectedColumns.get(3).booleanValue();
+
+        if (isEndDateSearched) {
+            if (model.getEndDate() == null) {
+                query += employeeColumns.get(3) + " IS NULL AND ";
+            } else {
+                query += employeeColumns.get(3) + " " + conditions.get(1) + " ? AND ";
+                whereColumns.add(employeeColumns.get(3));
+            }
+        }
+
+        if (model.getOnDuty() != ' ') {
+            query += employeeColumns.get(4) + " = ? AND ";
+            whereColumns.add(employeeColumns.get(4));
+        }
+
+        query = query.substring(0, query.length() - 4);
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
+            for(int i = 0; i < whereColumns.size(); i++) {
+                String column = whereColumns.get(i);
+                if (stringColumns.contains(column)) {
+                    ps.setString(i+1, "%" + employeeStringGetter(column, model, null) + "%");
+                } else if (charColumns.contains(column)) {
+                    ps.setString(i+1, String.valueOf(employeeCharGetter(column, model, null, null, null)));
+                } else if (dateColumns.contains(column)) {
+                    ps.setDate(i+1, employeeDateGetter(column, model));
+                } else if (intColumns.contains(column)) {
+                    ps.setInt(i+1, employeeIntegerGetter(column, null, null));
+                }
+            }
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                ArrayList<String> row = new ArrayList<>();
+                for (String column : projectionColumns) {
+                    if (stringColumns.contains(column)) {
+                        row.add(rs.getString(column));
+                    } else if (dateColumns.contains(column)) {
+                        if (rs.getDate(column) == null) {
+                            row.add("Currently employed");
+                        } else {
+                            row.add(rs.getDate(column).toString());
+                        }
+                    } else if (charColumns.contains(column)) {
+                        row.add(rs.getString(column));
+                    } else if (intColumns.contains(column)) {
+                        row.add(Integer.toString(rs.getInt(column)));
+                    }
+                }
+                rowData.add(row);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        result = new SelectModel(projectionColumns, rowData);
+        return result;
+    }
+
+    public int employeeIntegerGetter(String column, VetEmployeeModel vmodel, ManagerEmployeeModel mmodel) {
+        int ret = -1;
+        if (vmodel != null) {
+            if (column.equals("Experience")) {
+                ret = vmodel.getExperience();
+            }
+        } else if (mmodel != null) {
+            if (column.equals("Office_#")) {
+                ret = mmodel.getOfficeNumber();
+            }
+        }
+        return ret;
+    }
+
+    public String employeeStringGetter(String column, ZooEmployeeModel model, VetEmployeeModel vmodel) {
+        String ret = "";
+        if (column.equals("Employee_ID")) {
+            ret = model.getEmployee_ID();
+        } else if (column.equals("Name")) {
+            ret = model.getName();
+        }
+
+        if (vmodel != null) {
+            if (column.equals("Specialization")) {
+                ret = vmodel.getSpecialization();
+            } else if (column.equals("Phone_Number")) {
+                ret = vmodel.getPhoneNumber();
+            }
+        }
+        return ret;
+    }
+
+    public char employeeCharGetter(String column, ZooEmployeeModel model, VetEmployeeModel vmodel, ZookeeperEmployeeModel zmodel, ManagerEmployeeModel mmodel) {
+        char ret = ' ';
+        if (column.equals("On_Duty")) {
+            ret = model.getOnDuty();
+        } else if (vmodel != null) {
+            if (column.equals("On_Call")) {
+                ret = vmodel.getOnCall();
+            }
+        } else if (zmodel != null) {
+            if (column.equals("Event_Duty")) {
+                ret = zmodel.getEventDuty();
+            }
+        } else if (mmodel != null) {
+            if (column.equals("In_Office")) {
+                ret = mmodel.getInOffice();
+            }
+        }
+        return ret;
+    }
+
+    public Date employeeDateGetter(String column, ZooEmployeeModel model) {
+        Date ret = null;
+        if (column.equals("Start_Date")) {
+            ret = model.getStartDate();
+        } else if (column.equals("End_Date")) {
+            ret = model.getEndDate();
+        }
+        return ret;
     }
 
     public String[] getEmployeeIDs() {
