@@ -2,6 +2,7 @@ package zoo.database;
 
 import zoo.model.*;
 
+import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -138,6 +139,7 @@ public class EmployeeDatabaseHandler {
             }
 
         } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
             e.printStackTrace();
         }
@@ -244,6 +246,7 @@ public class EmployeeDatabaseHandler {
             }
 
         } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
             e.printStackTrace();
         }
@@ -354,6 +357,7 @@ public class EmployeeDatabaseHandler {
             }
 
         } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
             e.printStackTrace();
         }
@@ -530,7 +534,7 @@ public class EmployeeDatabaseHandler {
             rs.close();
             stmt.close();
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
         }
         result.sort((o1, o2) -> {
@@ -559,7 +563,7 @@ public class EmployeeDatabaseHandler {
             rs.close();
             stmt.close();
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
         }
         return zooEmployeeModel;
@@ -584,7 +588,7 @@ public class EmployeeDatabaseHandler {
             rs.close();
             stmt.close();
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
         }
         return zookeeperEmployeeModel;
@@ -612,7 +616,7 @@ public class EmployeeDatabaseHandler {
             rs.close();
             stmt.close();
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
         }
         return vetEmployeeModel;
@@ -638,7 +642,7 @@ public class EmployeeDatabaseHandler {
             rs.close();
             stmt.close();
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
         }
         return managerEmployeeModel;
@@ -662,7 +666,7 @@ public class EmployeeDatabaseHandler {
             rs.close();
             stmt.close();
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
         }
         return result.toArray(new ZooEmployeeModel[result.size()]);
@@ -687,7 +691,7 @@ public class EmployeeDatabaseHandler {
             rs.close();
             stmt.close();
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
         }
         result.sort((o1, o2) -> {
@@ -720,7 +724,7 @@ public class EmployeeDatabaseHandler {
             rs.close();
             stmt.close();
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
         }
         result.sort((o1, o2) -> {
@@ -729,6 +733,18 @@ public class EmployeeDatabaseHandler {
             return id1 - id2;
         });
         return result.toArray(new VetEmployeeModel[result.size()]);
+    }
+
+    public String[] getManagerIDs() {
+        ManagerEmployeeModel[] managers = getManagerEmployeeInfo();
+        ArrayList<String> managersStringArray = new ArrayList<>();
+        for (ManagerEmployeeModel manager: managers) {
+            String ID = manager.getEmployee_ID();
+            managersStringArray.add(ID);
+        }
+        String[] IDs = new String[managersStringArray.size()];
+        IDs = managersStringArray.toArray(IDs);
+        return IDs;
     }
 
     public ManagerEmployeeModel[] getManagerEmployeeInfo() {
@@ -751,7 +767,7 @@ public class EmployeeDatabaseHandler {
             rs.close();
             stmt.close();
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
         }
         result.sort((o1, o2) -> {
@@ -782,7 +798,7 @@ public class EmployeeDatabaseHandler {
             connection.commit();
             ps.close();
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
         }
     }
@@ -804,7 +820,7 @@ public class EmployeeDatabaseHandler {
             connection.commit();
             ps.close();
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
         }
     }
@@ -828,7 +844,7 @@ public class EmployeeDatabaseHandler {
 
             ps.close();
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
         }
     }
@@ -847,7 +863,7 @@ public class EmployeeDatabaseHandler {
 
             ps.close();
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
         }
     }
@@ -889,7 +905,7 @@ public class EmployeeDatabaseHandler {
             }
 
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
         }
     }
@@ -909,7 +925,7 @@ public class EmployeeDatabaseHandler {
             }
 
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
         }
     }
@@ -974,7 +990,7 @@ public class EmployeeDatabaseHandler {
             }
 
         } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage());
             rollbackConnection();
         }
     }

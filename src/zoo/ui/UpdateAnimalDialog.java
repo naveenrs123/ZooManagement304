@@ -1,5 +1,6 @@
 package zoo.ui;
 
+import org.jdatepicker.DateModel;
 import org.jdatepicker.JDatePicker;
 import org.jdatepicker.UtilCalendarModel;
 import zoo.database.DatabaseConnectionHandler;
@@ -13,35 +14,29 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.Array;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Properties;
-import java.util.Vector;
+import java.util.*;
 
-public class AddAnimalDialog extends JFrame{
+public class UpdateAnimalDialog extends JFrame{
     DatabaseConnectionHandler dbhandler;
     JTable table;
-
     /**
-     * 0: Animal ID, 1: Age, 2: Name
+     * 0: Age, 1: Name
      */
     ArrayList<JTextField> textFieldList = new ArrayList<>();
 
     /**
-     * 0: Type, 1: Sex, 2: Species, 3: Area_ID,Pen_Number, 4: Approval Manager
+     * 0: Animal_ID 1: Type, 2: Sex, 3: Species, 4: Area_ID,Pen_Number, 5: ManagerID
      */
-    ArrayList<JComboBox> comboBoxList = new ArrayList<>();
+    ArrayList<JComboBox<String>> comboBoxList = new ArrayList<>();
 
     /**
      * 0: Start Date, 1: End Date
      */
     ArrayList<JDatePicker> datePickers = new ArrayList<>();
 
-    public AddAnimalDialog(DatabaseConnectionHandler dbhandler, JTable table) {
-        super("Add Animal");
+    public UpdateAnimalDialog(DatabaseConnectionHandler dbhandler, JTable table) {
+        super("Update Animal Information");
         this.dbhandler = dbhandler;
         this.table = table;
     }
@@ -51,7 +46,7 @@ public class AddAnimalDialog extends JFrame{
         this.setContentPane(contentPane);
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
 
-        this.setSize(700, 400);
+        this.setSize(900, 450);
         this.setResizable(false);
 
         JTextPane infoPanel = createInfoPanel();
@@ -65,11 +60,9 @@ public class AddAnimalDialog extends JFrame{
         allAnimalsInput.setMaximumSize(new Dimension(300, 300));
         allAnimalsInput.setAlignmentY(Component.TOP_ALIGNMENT);
         allAnimalsInput.setAlignmentX(Component.CENTER_ALIGNMENT);
-
         String[] sex = {"F", "M"};
-        String[] areaPens = dbhandler.getPenNumbers();
 
-        JPanel animalIDPanel = createTextInputPanel("Animal ID");
+        JPanel animalIDPanel = createDropdownInputPanel("Animal IDs", dbhandler.getAnimalIDs());
         JPanel animalTypes = createDropdownInputPanel("Type", dbhandler.getAnimalTypes());
         JPanel animalSex = createDropdownInputPanel("Sex", sex);
 
@@ -89,7 +82,7 @@ public class AddAnimalDialog extends JFrame{
         JPanel animalSpecies = createDropdownInputPanel("Species", dbhandler.getAnimalSpecies());
         JPanel agePanel = createTextInputPanel("Age");
         JPanel namePanel = createTextInputPanel("Name");
-        JPanel penNumbers = createDropdownInputPanel("Area, Pen", areaPens);
+        JPanel penNumbers = createDropdownInputPanel("Area, Pen", dbhandler.getPenNumbers());
         JPanel managerIDs = createDropdownInputPanel("Approval Manager", managerIDStrings);
         animals2.add(animalSpecies);
         animals2.add(agePanel);
@@ -97,10 +90,12 @@ public class AddAnimalDialog extends JFrame{
         animals2.add(penNumbers);
         animals2.add(managerIDs);
 
-
-        inputsPane.add(Box.createRigidArea(new Dimension(50, 0)));
-        inputsPane.add(allAnimalsInput);
-        inputsPane.add(animals2);
+        comboBoxList.get(0).addActionListener(e -> {
+            Object item = comboBoxList.get(0).getSelectedItem();
+            resetFields();
+            comboBoxList.get(0).setSelectedItem(item);
+            setFields();
+        });
 
         JPanel animalButtons = new JPanel();
         animalButtons.setLayout(new BoxLayout(animalButtons, BoxLayout.LINE_AXIS));
@@ -108,17 +103,21 @@ public class AddAnimalDialog extends JFrame{
         animalButtons.setAlignmentX(Component.CENTER_ALIGNMENT);
         JButton submit = new JButton("Submit");
         JButton clear = new JButton("Clear Fields");
-
-        submit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                insertAnimal();
-            }
-        });
-
+        JButton delete = new JButton("Delete Selected Animal");
         animalButtons.add(submit);
         animalButtons.add(Box.createRigidArea(new Dimension(10, 0)));
         animalButtons.add(clear);
+        animalButtons.add(Box.createRigidArea(new Dimension(10, 0)));
+        animalButtons.add(delete);
+
+        submit.addActionListener(e -> updateAnimal());
+
+        clear.addActionListener(e -> resetFields());
+
+        delete.addActionListener(e -> deleteAnimal());
+
+        inputsPane.add(allAnimalsInput);
+        inputsPane.add(animals2);
 
         contentPane.add(Box.createRigidArea(new Dimension(0, 30)));
         contentPane.add(infoPanel);
@@ -129,33 +128,67 @@ public class AddAnimalDialog extends JFrame{
         this.setVisible(true);
     }
 
-    private void insertAnimal() {
-        String animalID = textFieldList.get(0).getText().trim();
-        String age = textFieldList.get(1).getText().trim();
-        String name = textFieldList.get(2).getText().trim();
-        String type = comboBoxList.get(0).getSelectedItem().toString();
-        String sex = comboBoxList.get(1).getSelectedItem().toString();
-        String speciesString = comboBoxList.get(2).getSelectedItem().toString();
-        String species;
-        if (speciesString.contains("_")) {
-            String[] speciesSplit = comboBoxList.get(2).getSelectedItem().toString().split("_",2);
-            species = speciesSplit[0] + " " + speciesSplit[1];
-        } else {
-            species = speciesString;
+    private void resetFields() {
+        for (JTextField field : textFieldList) {
+            field.setText("");
         }
-        String[] area_pen = comboBoxList.get(3).getSelectedItem().toString().split(",", 2);
-        String area_id = area_pen[0];
-        String pen_number = area_pen[1];
-        String managerID = comboBoxList.get(4).getSelectedItem().toString();
+        for (JComboBox<String> comboBox : comboBoxList) {
+            comboBox.setSelectedIndex(0);
+        }
+        for (JDatePicker datePicker : datePickers) {
+            datePicker.getFormattedTextField().setText("");
+        }
+    }
 
-        boolean requirement = (!animalID.equals("")) && (!age.equals("")) && (!name.equals(" ")) && (!type.equals("")) && (!species.equals("")) && (!area_id.equals("")) && (!pen_number.equals(""));
-        if (requirement) {
-            AnimalModel animal = new AnimalModel(animalID, type, sex.charAt(0), species, Integer.parseInt(age), name, Integer.parseInt(pen_number), area_id.charAt(0));
-            dbhandler.insertAnimal(animal, managerID);
-            sharedInfo();
-        } else {
-            System.out.println("error");
+    private void setFields() {
+        String id = (String) comboBoxList.get(0).getSelectedItem();
+        AnimalModel animal = dbhandler.getOneAnimal(id);
+        textFieldList.get(0).setText(Integer.toString(animal.getAge()));
+        textFieldList.get(1).setText(animal.getName());
+
+        String type = animal.getType();
+        comboBoxList.get(1).setSelectedItem(type);
+
+        String sex = Character.toString(animal.getSex());
+        comboBoxList.get(2).setSelectedItem(sex);
+
+        String species = animal.getSpecies();
+        comboBoxList.get(3).setSelectedItem(species);
+
+        String penArea = animal.getAreaID() + "," + Integer.toString(animal.getPenNumber());
+        comboBoxList.get(4).setSelectedItem(penArea);
+    }
+
+    private void deleteAnimal() {
+        String id = comboBoxList.get(0).getSelectedItem().toString();
+        dbhandler.deleteAnimal(id);
+        sharedInfo();
+        resetFields();
+    }
+
+    private void updateAnimal() {
+        String animalID = ((String) comboBoxList.get(0).getSelectedItem());
+        int age = Integer.parseInt(textFieldList.get(0).getText().trim());
+        String name = textFieldList.get(1).getText().trim();
+        String type = comboBoxList.get(1).getSelectedItem().toString();
+        char sex = comboBoxList.get(2).getSelectedItem().toString().charAt(0);
+        String species = comboBoxList.get(3).getSelectedItem().toString();
+        String penArea = comboBoxList.get(4).getSelectedItem().toString();
+        int penNumber = Integer.parseInt(penArea.split(",")[1]);
+        char areaID = penArea.split(",")[0].charAt(0);
+        String managerID = comboBoxList.get(5).getSelectedItem().toString();
+
+        AnimalModel animal = new AnimalModel(animalID, type, sex, species, age, name, penNumber, areaID);
+        AnimalModel animalOld = dbhandler.getOneAnimal(animalID);
+        if (animal.getPenNumber() != animalOld.getPenNumber() || animal.getAreaID() != animalOld.getAreaID()) {
+            String r_ID = "R" + Integer.toString(dbhandler.getNextRelocationNumber());
+            long millis=System.currentTimeMillis();
+            Date date=new java.sql.Date(millis);
+            AnimalRelocationModel relocation = new AnimalRelocationModel(r_ID, managerID, animalID, Integer.toString(animalOld.getPenNumber()), Character.toString(animalOld.getAreaID()), Integer.toString(animal.getPenNumber()), Character.toString(animal.getAreaID()), date);
+            dbhandler.insertAnimalRelocation(relocation);
         }
+        dbhandler.updateAnimal(animal);
+        sharedInfo();
     }
 
     private JTextPane createInfoPanel() {
@@ -169,13 +202,13 @@ public class AddAnimalDialog extends JFrame{
         infoPanel.setCharacterAttributes(center, false);
         infoText.setParagraphAttributes(0, infoText.getLength(), center, false);
         try {
-            infoText.insertString(0, "To add a new animal to the system, type in and select all the appropriate details for that " +
-                    " animal.\n\nWhen you are done, click the 'Submit' button. If you need to clear all fields, hit the" +
-                    " 'Clear Fields' button to reset all inputs.", center);
+            infoText.insertString(0, "To update animal information, select the ID of the animal and update the fields" +
+                    " you want to change.\n\nWhen you are done, click the 'Submit Button'. To reset the fields, click the" +
+                    " 'Clear Fields' button. To instead delete the animal with the ID you selected, click the 'Delete Selected Animal' button.", center);
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
-        infoPanel.setMaximumSize(new Dimension(650, 200));
+        infoPanel.setMaximumSize(new Dimension(850, 120));
         return infoPanel;
     }
 
@@ -190,7 +223,7 @@ public class AddAnimalDialog extends JFrame{
         panelText.setBorder(new EmptyBorder(0, 0, 0, 10));
 
         JTextField panelField = new JTextField();
-        panelField.setMaximumSize(new Dimension(150, 30));
+        panelField.setMaximumSize(new Dimension(100, 30));
         panelField.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         panel.add(panelText);
@@ -210,8 +243,8 @@ public class AddAnimalDialog extends JFrame{
         panelText.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelText.setBorder(new EmptyBorder(0, 0, 0, 10));
 
-        JComboBox panelCombo = new JComboBox(choices);
-        panelCombo.setMaximumSize(new Dimension(150, 30));
+        JComboBox<String> panelCombo = new JComboBox<>(choices);
+        panelCombo.setMaximumSize(new Dimension(100, 30));
         panelCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         panel.add(panelText);
@@ -256,4 +289,5 @@ public class AddAnimalDialog extends JFrame{
         table.setModel(tableModel);
         tableModel.fireTableDataChanged();
     }
+
 }

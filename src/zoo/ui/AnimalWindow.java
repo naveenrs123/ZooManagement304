@@ -13,7 +13,7 @@ import java.util.Vector;
 
 public class AnimalWindow extends JFrame {
     AddAnimalDialog addAnimalDialog;
-    UpdateEmployeeDialog updateEmployeeDialog;
+    UpdateAnimalDialog updateAnimalDialog;
     DatabaseConnectionHandler dbhandler;
     JTable table;
     JScrollPane animalScroll;
@@ -23,7 +23,7 @@ public class AnimalWindow extends JFrame {
         this.dbhandler = dbhandler;
         this.table = new JTable();
         addAnimalDialog = new AddAnimalDialog(dbhandler, table);
-        updateEmployeeDialog = new UpdateEmployeeDialog(dbhandler, table);
+        updateAnimalDialog = new UpdateAnimalDialog(dbhandler, table);
     }
 
     public void showFrame() {
@@ -120,7 +120,7 @@ public class AnimalWindow extends JFrame {
         updateAnimal.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                updateEmployeeDialog.showFrame();
+                updateAnimalDialog.showFrame();
             }
         });
 
