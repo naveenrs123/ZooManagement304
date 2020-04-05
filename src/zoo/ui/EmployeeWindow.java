@@ -12,6 +12,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.Vector;
 
 public class EmployeeWindow extends JFrame {
@@ -48,29 +49,19 @@ public class EmployeeWindow extends JFrame {
         selectOptions.setPreferredSize(new Dimension(700, 50));
         selectOptions.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        JButton allEmployees = new JButton("All Employees");
         JButton zookeepers = new JButton("Zookeepers");
         JButton vets = new JButton("Vets");
         JButton managers = new JButton("Managers");
 
-        zookeepers.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                zookeeperInfo();
-            }
-        });
-        vets.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                vetInfo();
-            }
-        });
-        managers.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                managerInfo();
-            }
-        });
 
+         allEmployees.addActionListener(e -> sharedInfo());
+        zookeepers.addActionListener(e -> zookeeperInfo());
+        vets.addActionListener(e -> vetInfo());
+        managers.addActionListener(e -> managerInfo());
+
+        selectOptions.add(allEmployees);
+        selectOptions.add(Box.createRigidArea(new Dimension(10, 0)));
         selectOptions.add(zookeepers);
         selectOptions.add(Box.createRigidArea(new Dimension(10, 0)));
         selectOptions.add(vets);
@@ -84,33 +75,13 @@ public class EmployeeWindow extends JFrame {
 
         JButton addEmployee = new JButton("Add Employee");
         JButton updateEmployee = new JButton("Update Employee Info");
-        JButton searchEmployees = new JButton("Search");
-        JButton resetView = new JButton("Reset View");
+        JButton searchEmployees = new JButton("Basic Search");
+        JButton advanced = new JButton("Advanced Search");
 
-        addEmployee.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addEmployeeDialog.showFrame();
-            }
-        });
-        updateEmployee.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateEmployeeDialog.showFrame();
-            }
-        });
-        searchEmployees.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                searchEmployeeDialog.showFrame();
-            }
-        });
-        resetView.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                sharedInfo();
-            }
-        });
+        addEmployee.addActionListener(e -> addEmployeeDialog.showFrame());
+        updateEmployee.addActionListener(e -> updateEmployeeDialog.showFrame());
+        searchEmployees.addActionListener(e -> searchEmployeeDialog.showFrame());
+
 
         employeeButtons.add(addEmployee);
         employeeButtons.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -118,7 +89,7 @@ public class EmployeeWindow extends JFrame {
         employeeButtons.add(Box.createRigidArea(new Dimension(10, 0)));
         employeeButtons.add(searchEmployees);
         employeeButtons.add(Box.createRigidArea(new Dimension(10, 0)));
-        employeeButtons.add(resetView);
+        employeeButtons.add(advanced);
 
         contentPane.add(titlePane);
         contentPane.add(employeeScroll);
@@ -174,13 +145,7 @@ public class EmployeeWindow extends JFrame {
                 return false;
             }
         };
-        Vector<String> columnNames = new Vector();
-        columnNames.add("Employee ID");
-        columnNames.add("Name");
-        columnNames.add("Start Date");
-        columnNames.add("End Date");
-        columnNames.add("On Duty?");
-        columnNames.add("Event Duty?");
+        Vector columnNames = new Vector<>(Arrays.asList("Employee ID","Name", "Start Date", "End Date", "On Duty?", "Event Duty?"));
         tableModel.setColumnIdentifiers(columnNames);
 
         ZookeeperEmployeeModel[] employees = dbhandler.getZookeeperEmployeeInfo();

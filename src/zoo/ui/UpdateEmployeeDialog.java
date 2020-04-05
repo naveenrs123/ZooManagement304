@@ -17,15 +17,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Properties;
-import java.util.Vector;
+import java.util.*;
 
 public class UpdateEmployeeDialog extends JFrame {
     DatabaseConnectionHandler dbhandler;
@@ -39,7 +32,7 @@ public class UpdateEmployeeDialog extends JFrame {
     /**
      * 0: Employee_ID, 1: On Duty, 2: On Call, 3: Event Duty, 4: In Office
      */
-    ArrayList<JComboBox> comboBoxList = new ArrayList<>();
+    ArrayList<JComboBox<String>> comboBoxList = new ArrayList<>();
 
     /**
      * 0: Start Date, 1: End Date
@@ -131,14 +124,11 @@ public class UpdateEmployeeDialog extends JFrame {
         inputsPane.add(vetInput);
         inputsPane.add(keeperManagerInput);
 
-        comboBoxList.get(0).addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Object item = comboBoxList.get(0).getSelectedItem();
-                resetFields();
-                comboBoxList.get(0).setSelectedItem(item);
-                setFields();
-            }
+        comboBoxList.get(0).addActionListener(e -> {
+            Object item = comboBoxList.get(0).getSelectedItem();
+            resetFields();
+            comboBoxList.get(0).setSelectedItem(item);
+            setFields();
         });
 
         JPanel employeeButtons = new JPanel();
@@ -151,19 +141,9 @@ public class UpdateEmployeeDialog extends JFrame {
         employeeButtons.add(Box.createRigidArea(new Dimension(10, 0)));
         employeeButtons.add(clear);
 
-        submit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateEmployee();
-            }
-        });
+        submit.addActionListener(e -> updateEmployee());
 
-        clear.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                resetFields();
-            }
-        });
+        clear.addActionListener(e -> resetFields());
 
         contentPane.add(Box.createRigidArea(new Dimension(0, 30)));
         contentPane.add(infoPanel);
@@ -178,7 +158,7 @@ public class UpdateEmployeeDialog extends JFrame {
         for (JTextField field : textFieldList) {
             field.setText("");
         }
-        for (JComboBox comboBox : comboBoxList) {
+        for (JComboBox<String> comboBox : comboBoxList) {
             comboBox.setSelectedIndex(0);
         }
         for (JDatePicker datePicker : datePickers) {
@@ -240,9 +220,9 @@ public class UpdateEmployeeDialog extends JFrame {
         String name = textFieldList.get(0).getText().trim();
         Date startDate = getDate(datePickers.get(0));
         Date endDate = getDate(datePickers.get(1));
-        char onDuty = ((String) comboBoxList.get(1).getSelectedItem()).charAt(0);
+        char onDuty = ((String) Objects.requireNonNull(comboBoxList.get(1).getSelectedItem())).charAt(0);
 
-        char onCall = ((String) comboBoxList.get(2).getSelectedItem()).charAt(0);
+        char onCall = ((String) Objects.requireNonNull(comboBoxList.get(2).getSelectedItem())).charAt(0);
 
         String experienceString = textFieldList.get(1).getText().trim();
         int experience = -1;
@@ -253,9 +233,9 @@ public class UpdateEmployeeDialog extends JFrame {
         String specialization = textFieldList.get(2).getText().trim();
         String phoneNumber = textFieldList.get(3).getText().trim();
 
-        char eventDuty = ((String) comboBoxList.get(3).getSelectedItem()).charAt(0);
+        char eventDuty = ((String) Objects.requireNonNull(comboBoxList.get(3).getSelectedItem())).charAt(0);
 
-        char inOffice = ((String) comboBoxList.get(4).getSelectedItem()).charAt(0);
+        char inOffice = ((String) Objects.requireNonNull(comboBoxList.get(4).getSelectedItem())).charAt(0);
 
         String officeNumberString = textFieldList.get(4).getText().trim();
         int officeNumber = -1;
@@ -336,7 +316,7 @@ public class UpdateEmployeeDialog extends JFrame {
         panelText.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelText.setBorder(new EmptyBorder(0, 0, 0, 10));
 
-        JComboBox panelCombo = new JComboBox(choices);
+        JComboBox<String> panelCombo = new JComboBox<>(choices);
         panelCombo.setMaximumSize(new Dimension(100, 30));
         panelCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -365,8 +345,6 @@ public class UpdateEmployeeDialog extends JFrame {
         UtilCalendarModel model = new UtilCalendarModel();
         JDatePicker datePicker = new JDatePicker(model);
         datePicker.setMaximumSize(new Dimension(150, 30));
-
-        //datePicker.setMaximumSize(new Dimension(100, 16));
         datePicker.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         panel.add(panelText);

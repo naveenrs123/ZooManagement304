@@ -1,7 +1,5 @@
 package zoo.ui;
 
-import com.sun.org.apache.bcel.internal.generic.ARRAYLENGTH;
-import jdk.nashorn.internal.runtime.Specialization;
 import org.jdatepicker.JDatePicker;
 import org.jdatepicker.UtilCalendarModel;
 import zoo.database.DatabaseConnectionHandler;
@@ -15,12 +13,10 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Properties;
+import java.util.Objects;
 import java.util.Vector;
 
 public class SearchEmployeeDialog extends JFrame {
@@ -31,7 +27,6 @@ public class SearchEmployeeDialog extends JFrame {
     JCheckBox managerCheckbox;
 
     ArrayList<String> arithmeticFields = new ArrayList<>(Arrays.asList("Start Date", "End Date", "Experience", "Office Number"));
-    ArrayList<String> stringFields = new ArrayList<>(Arrays.asList("Name", "Specialization"));
 
     /**
      * 0: Employee ID, 1: Name, 2: Experience, 3: Specialization, 4: Phone Number
@@ -42,7 +37,7 @@ public class SearchEmployeeDialog extends JFrame {
     /**
      * 0: On Duty, 1: On Call, 2: Event Duty, 3: In Office
      */
-    ArrayList<JComboBox> comboBoxList = new ArrayList<>();
+    ArrayList<JComboBox<String>> comboBoxList = new ArrayList<>();
 
     /**
      * 0: Start Date, 1: End Date
@@ -59,7 +54,7 @@ public class SearchEmployeeDialog extends JFrame {
     /**
      * 0: Start Date, 1: End Date, 2: Experience, 3: Office Number
      */
-    ArrayList<JComboBox> conditionBoxes = new ArrayList<>();
+    ArrayList<JComboBox<String>> conditionBoxes = new ArrayList<>();
 
     public SearchEmployeeDialog(DatabaseConnectionHandler dbhandler, JTable table) {
         super("Search Employees");
@@ -177,18 +172,8 @@ public class SearchEmployeeDialog extends JFrame {
         JButton clear = new JButton("Clear Fields");
 
 
-        submit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                searchEmployees();
-            }
-        });
-        clear.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                resetFields();
-            }
-        });
+        submit.addActionListener(e -> searchEmployees());
+        clear.addActionListener(e -> resetFields());
 
         employeeButtons.add(advanced);
         employeeButtons.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -209,12 +194,21 @@ public class SearchEmployeeDialog extends JFrame {
         for (JTextField field : textFieldList) {
             field.setText("");
         }
-        for (JComboBox comboBox : comboBoxList) {
+        for (JComboBox<String> comboBox : comboBoxList) {
             comboBox.setSelectedIndex(0);
         }
         for (JDatePicker datePicker : datePickers) {
             datePicker.getFormattedTextField().setText("");
         }
+        for (JComboBox<String> comboBox : conditionBoxes) {
+            comboBox.setSelectedIndex(0);
+        }
+        for (int i = 1; i < checkBoxes.size(); i++) {
+            checkBoxes.get(i).setSelected(false);
+        }
+        vetCheckbox.setSelected(false);
+        zookeeperCheckbox.setSelected(false);
+        managerCheckbox.setSelected(false);
     }
 
     private void searchEmployees() {
@@ -232,23 +226,22 @@ public class SearchEmployeeDialog extends JFrame {
         selectedColumns.add(checkBoxes.get(2).isSelected());
         
         String startDateCondition = (String) conditionBoxes.get(0).getSelectedItem();
-        if (!startDateCondition.equals(" ")) {
+        if (!Objects.equals(startDateCondition, " ")) {
             conditions.add(startDateCondition);
         }
-
 
         Date endDate = getDate(datePickers.get(1));
         selectedColumns.add(checkBoxes.get(3).isSelected());
         String endDateCondition = (String) conditionBoxes.get(0).getSelectedItem();
-        if (!endDateCondition.equals(" ")) {
+        if (!Objects.equals(endDateCondition, " ")) {
             conditions.add(endDateCondition);
         }
 
-        char onDuty = ((String) comboBoxList.get(0).getSelectedItem()).charAt(0);
+        char onDuty = ((String) Objects.requireNonNull(comboBoxList.get(0).getSelectedItem())).charAt(0);
         selectedColumns.add(checkBoxes.get(4).isSelected());
 
         // Vet
-        char onCall = ((String) comboBoxList.get(1).getSelectedItem()).charAt(0);
+        char onCall = ((String) Objects.requireNonNull(comboBoxList.get(1).getSelectedItem())).charAt(0);
         selectedColumns.add(checkBoxes.get(5).isSelected());
 
         String experienceString = textFieldList.get(2).getText().trim();
@@ -258,7 +251,7 @@ public class SearchEmployeeDialog extends JFrame {
         }
         selectedColumns.add(checkBoxes.get(6).isSelected());
         String experienceCondition = (String) conditionBoxes.get(0).getSelectedItem();
-        if (!experienceCondition.equals(" ")) {
+        if (!Objects.equals(experienceCondition, " ")) {
             conditions.add(experienceCondition);
         }
 
@@ -269,11 +262,11 @@ public class SearchEmployeeDialog extends JFrame {
         selectedColumns.add(checkBoxes.get(8).isSelected());
 
         // Zookeeper
-        char eventDuty = ((String) comboBoxList.get(2).getSelectedItem()).charAt(0);
+        char eventDuty = ((String) Objects.requireNonNull(comboBoxList.get(2).getSelectedItem())).charAt(0);
         selectedColumns.add(checkBoxes.get(9).isSelected());
 
         // Manager
-        char inOffice = ((String) comboBoxList.get(3).getSelectedItem()).charAt(0);
+        char inOffice = ((String) Objects.requireNonNull(comboBoxList.get(3).getSelectedItem())).charAt(0);
         selectedColumns.add(checkBoxes.get(10).isSelected());
 
         String officeNumberString = textFieldList.get(5).getText().trim();
@@ -283,27 +276,27 @@ public class SearchEmployeeDialog extends JFrame {
         }
         selectedColumns.add(checkBoxes.get(11).isSelected());
         String officeNumberCondition = (String) conditionBoxes.get(0).getSelectedItem();
-        if (!officeNumberCondition.equals(" ")) {
+        if (!Objects.equals(officeNumberCondition, " ")) {
             conditions.add(officeNumberCondition);
         }
 
         if (vetCheckbox.isSelected()) {
             VetEmployeeModel vetEmployeeModel = new VetEmployeeModel(employeeID, name, startDate, endDate, onDuty, onCall, experience, specialization, phoneNumber);
+            displaySelectQuery(dbhandler.searchVetEmployees(vetEmployeeModel, selectedColumns, conditions));
 
         }
         else if (zookeeperCheckbox.isSelected()) {
             ZookeeperEmployeeModel zookeeperEmployeeModel = new ZookeeperEmployeeModel(employeeID, name, startDate, endDate, onDuty, eventDuty);
-
+            displaySelectQuery(dbhandler.searchZookeeperEmployees(zookeeperEmployeeModel, selectedColumns, conditions));
         }
         else if (managerCheckbox.isSelected()) {
             ManagerEmployeeModel managerEmployeeModel = new ManagerEmployeeModel(employeeID, name, startDate, endDate, onDuty, inOffice, officeNumber);
-
+            displaySelectQuery(dbhandler.searchManagerEmployees(managerEmployeeModel, selectedColumns, conditions));
         }
         else {
             ZooEmployeeModel zooEmployeeModel = new ZooEmployeeModel(employeeID, name, startDate, endDate, onDuty);
             displaySelectQuery(dbhandler.searchEmployees(zooEmployeeModel, selectedColumns, conditions));
         }
-
     }
 
     private Date getDate(JDatePicker datePicker) {
@@ -364,9 +357,9 @@ public class SearchEmployeeDialog extends JFrame {
         panel.add(panelText);
         panel.add(panelField);
 
-        JComboBox comboBox;
+        JComboBox<String> comboBox;
         if (arithmeticFields.contains(labelText)) {
-            comboBox = new JComboBox(new String[]{" ", ">", ">=", "<", "<=", "==", "<>"});
+            comboBox = new JComboBox<>(new String[]{" ", ">", ">=", "<", "<=", "==", "<>"});
             comboBox.setMaximumSize(new Dimension(70, 30));
             panel.add(comboBox);
             conditionBoxes.add(comboBox);
@@ -390,7 +383,7 @@ public class SearchEmployeeDialog extends JFrame {
         panelText.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelText.setBorder(new EmptyBorder(0, 0, 0, 10));
 
-        JComboBox panelCombo = new JComboBox(choices);
+        JComboBox<String> panelCombo = new JComboBox<>(choices);
         panelCombo.setMaximumSize(new Dimension(100, 30));
         panelCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -425,7 +418,7 @@ public class SearchEmployeeDialog extends JFrame {
         panel.add(panelText);
         panel.add(datePicker);
 
-        JComboBox comboBox = new JComboBox(new String[]{" ", ">", ">=", "<", "<=", "==", "<>"});
+        JComboBox<String> comboBox = new JComboBox<>(new String[]{" ", ">", ">=", "<", "<=", "==", "<>"});
         comboBox.setMaximumSize(new Dimension(70, 30));
         panel.add(comboBox);
 
@@ -452,49 +445,13 @@ public class SearchEmployeeDialog extends JFrame {
                 return false;
             }
         };
-        Vector<String> columnNames = new Vector(model.getSelectedColumns());
+        Vector<String> columnNames = new Vector<>(model.getSelectedColumns());
         tableModel.setColumnIdentifiers(columnNames);
 
         ArrayList<ArrayList<String>> rowdata = model.getRowData();
         for (ArrayList<String> row : rowdata) {
-            Vector singleRow = new Vector<String>(row);
+            Vector<String> singleRow = new Vector<>(row);
             tableModel.addRow(singleRow);
-        }
-        table.setModel(tableModel);
-        tableModel.fireTableDataChanged();
-    }
-
-    public void sharedInfo() {
-        DefaultTableModel tableModel = new DefaultTableModel() {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        Vector<String> columnNames = new Vector<>();
-        columnNames.add("Employee ID");
-        columnNames.add("Name");
-        columnNames.add("Start Date");
-        columnNames.add("End Date");
-        columnNames.add("On Duty?");
-        tableModel.setColumnIdentifiers(columnNames);
-
-        ZooEmployeeModel[] employees = dbhandler.getEmployeeInfo();
-        Vector<String> employeeData;
-        for (ZooEmployeeModel employee: employees) {
-            employeeData = new Vector<>();
-            employeeData.add(employee.getEmployee_ID());
-            employeeData.add(employee.getName());
-            String enddate;
-            if (employee.getEndDate() == null) {
-                enddate = "Currently employed";
-            } else {
-                enddate = employee.getEndDate().toString();
-            }
-            employeeData.add(employee.getStartDate().toString());
-            employeeData.add(enddate);
-            employeeData.add(Character.toString(employee.getOnDuty()));
-            tableModel.addRow(employeeData);
         }
         table.setModel(tableModel);
         tableModel.fireTableDataChanged();
