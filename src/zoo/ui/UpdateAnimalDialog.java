@@ -14,6 +14,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Date;
 import java.util.*;
 
@@ -39,6 +41,12 @@ public class UpdateAnimalDialog extends JFrame{
         super("Update Animal Information");
         this.dbhandler = dbhandler;
         this.table = table;
+    }
+
+    private void clear() {
+        textFieldList.clear();
+        comboBoxList.clear();
+        datePickers.clear();
     }
 
     public void showFrame() {
@@ -110,11 +118,24 @@ public class UpdateAnimalDialog extends JFrame{
         animalButtons.add(Box.createRigidArea(new Dimension(10, 0)));
         animalButtons.add(delete);
 
-        submit.addActionListener(e -> updateAnimal());
+        submit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                updateAnimal();
+                clear();
+                dispose();
+            }
+        });
 
         clear.addActionListener(e -> resetFields());
 
-        delete.addActionListener(e -> deleteAnimal());
+        delete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                deleteAnimal();
+                clear();
+            }
+        });
 
         inputsPane.add(allAnimalsInput);
         inputsPane.add(animals2);

@@ -265,6 +265,10 @@ public class DatabaseConnectionHandler {
 
 	public String[] getPenNumbersInArea(char area) {return penAreaDatabaseHandler.getPenNumbersInArea(area);}
 
+	public PenCleaningModel[] getPenCleaningsFromTo(Date from, Date to) {return penAreaDatabaseHandler.getPenCleaningsFromTo(from, to);}
+
+	public AnimalRelocationModel[] getAnimalRelocationsFromTo(Date from, Date to) {return penAreaDatabaseHandler.getAnimalRelocationsFromTo(from, to);}
+
 	public void deleteAnimal(String animalID) {
 		animalDatabaseHandler.deleteAnimal(animalID);
 	}
