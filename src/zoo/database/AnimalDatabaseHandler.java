@@ -363,7 +363,7 @@ public class AnimalDatabaseHandler {
 
     public void deleteAnimal(String animalID) {
         try {
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM animals WHERE animal_id LIKE ?");
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM animals WHERE animal_id = ?");
             ps.setString(1, animalID);
 
             int rowCount = ps.executeUpdate();
