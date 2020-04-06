@@ -265,7 +265,7 @@ public class UpdateAnimalDialog extends JFrame{
         panelText.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelText.setBorder(new EmptyBorder(0, 0, 0, 10));
         JComboBox combobox = new JComboBox();
-        combobox.insertItemAt("", 0);
+        combobox.insertItemAt(" ", 0);
 
         for (String str: choices) {
             combobox.addItem(str);
