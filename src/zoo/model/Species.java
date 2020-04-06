@@ -5,6 +5,7 @@ public enum Species {
     Tiger,
     Horse,
     Cow,
+    Giraffe,
     Parrot,
     Polar_Bear,
     Elephant,
@@ -14,5 +15,10 @@ public enum Species {
     Koala,
     Flamingo,
     Sea_Sponge,
-    Spider
+    Spider,
+    Eagle,
+    Goldfish,
+    Carp,
+    Salmon,
+    Ape
 }

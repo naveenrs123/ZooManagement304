@@ -79,7 +79,6 @@ public class AnimalWindow extends JFrame {
 
         JButton addAnimal = new JButton("Add Animal");
         JButton updateAnimal = new JButton("Update Animal Info");
-        JButton searchAnimals = new JButton("Search");
         JButton typeCounts = new JButton("Animal Count by Type");
 
         addAnimal.addActionListener(e -> addAnimalDialog.showFrame());
@@ -89,8 +88,6 @@ public class AnimalWindow extends JFrame {
         animalButtons.add(addAnimal);
         animalButtons.add(Box.createRigidArea(new Dimension(10, 0)));
         animalButtons.add(updateAnimal);
-        animalButtons.add(Box.createRigidArea(new Dimension(10, 0)));
-        animalButtons.add(searchAnimals);
         animalButtons.add(Box.createRigidArea(new Dimension(10, 0)));
         animalButtons.add(typeCounts);
 

@@ -208,6 +208,7 @@ public class UpdateAnimalDialog extends JFrame{
             AnimalRelocationModel relocation = new AnimalRelocationModel(r_ID, managerID, animalID, Integer.toString(animalOld.getPenNumber()), Character.toString(animalOld.getAreaID()), Integer.toString(animal.getPenNumber()), Character.toString(animal.getAreaID()), date);
             dbhandler.insertAnimalRelocation(relocation);
         }
+        System.out.println("yote");
         dbhandler.updateAnimal(animal);
         sharedInfo();
     }

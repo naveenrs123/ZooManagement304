@@ -335,6 +335,7 @@ public class AnimalDatabaseHandler {
                 connection.commit();
                 pstmt.close();
             }
+
             PreparedStatement pstmt = connection.prepareStatement("UPDATE Animals SET PEN_NUMBER= ? WHERE ANIMAL_ID = ?");
             pstmt.setInt(1, animal.getPenNumber());
             pstmt.setString(2, id);
@@ -343,11 +344,11 @@ public class AnimalDatabaseHandler {
             pstmt.close();
 
             PreparedStatement pstmt2 = connection.prepareStatement("UPDATE Animals SET AREA_ID= ? WHERE ANIMAL_ID = ?");
-            pstmt.setString(1, Character.toString(animal.getAreaID()));
-            pstmt.setString(2, id);
-            pstmt.executeUpdate();
+            pstmt2.setString(1, Character.toString(animal.getAreaID()));
+            pstmt2.setString(2, id);
+            pstmt2.executeUpdate();
             connection.commit();
-            pstmt.close();
+            pstmt2.close();
 
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
