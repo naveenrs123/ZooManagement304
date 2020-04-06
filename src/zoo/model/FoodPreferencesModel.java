@@ -2,9 +2,9 @@ package zoo.model;
 
 public class FoodPreferencesModel {
     private String Food_Type;
-    private Species Species;
+    private String Species;
 
-    public FoodPreferencesModel(String food_Type, Species species) {
+    public FoodPreferencesModel(String food_Type, String species) {
         Food_Type = food_Type;
         Species = species;
     }
@@ -13,7 +13,7 @@ public class FoodPreferencesModel {
         return Food_Type;
     }
 
-    public Species getSpecies() {
+    public String getSpecies() {
         return Species;
     }
 }

@@ -159,7 +159,7 @@ public class FoodDatabaseHandler {
 
             }
             if (model.getDate_Of_Feeding()!=null) {
-                PreparedStatement ps = connection.prepareStatement("UPDATE FEEDING SET DATE_OF_FEEDING = ? WHERE FOOD_ID = ?");
+                PreparedStatement ps = connection.prepareStatement("UPDATE FEEDING SET DATE_OF_FEEDING= ? WHERE FOOD_ID = ?");
                 ps.setDate(1, model.getDate_Of_Feeding());
                 ps.setString(2, id);
                 ps.executeUpdate();

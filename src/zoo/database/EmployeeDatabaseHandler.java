@@ -823,6 +823,19 @@ public class EmployeeDatabaseHandler {
         return IDs;
     }
 
+    public String[] getVetIDs() {
+        VetEmployeeModel[] vets = getVetEmployeeInfo();
+        ArrayList<String> vetStringArray = new ArrayList<>();
+        for (VetEmployeeModel vet: vets) {
+            String ID = vet.getEmployee_ID();
+            vetStringArray.add(ID);
+        }
+        String[] IDs = new String[vetStringArray.size()];
+        IDs = vetStringArray.toArray(IDs);
+        return IDs;
+
+    }
+
     public String[] getZooKeeperIDs() {
         ZookeeperEmployeeModel[] zookeepers = getZookeeperEmployeeInfo();
         ArrayList<String> zookeeperStringArray = new ArrayList<>();

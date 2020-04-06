@@ -223,6 +223,24 @@ public class AnimalDatabaseHandler {
         }
     }
 
+    public int getNextCheckupNumber() {
+        try {
+            PreparedStatement ps = connection.prepareStatement("Select CHECKUP_ID from HEALTHCHECKUP");
+            ResultSet rs = ps.executeQuery();
+            int max = -1;
+            while (rs.next()) {
+                int value = Integer.parseInt(rs.getString(1).substring(2));
+                if (value > max) {
+                    max = value;
+                }
+            }
+            return max+1;
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            return 0;
+        }
+    }
+
     public int getNextRelocationNumber() {
         try {
             PreparedStatement ps = connection.prepareStatement("Select RELOCATION_ID from ANIMALRELOCATION");

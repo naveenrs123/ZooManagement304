@@ -8,18 +8,14 @@ public class HealthCheckupModel {
     private String AnimalID;
     private int Weight;
     private String HealthStatus;
-    private String Medication;
-    private String Comments;
     private Date CheckupDate;
 
-    public HealthCheckupModel(String checkupID, String employeeID, String animalID, int weight, String healthStatus, String medication, String comments, Date checkupDate) {
+    public HealthCheckupModel(String checkupID, String employeeID, String animalID, int weight, String healthStatus, Date checkupDate) {
         CheckupID = checkupID;
         EmployeeID = employeeID;
         AnimalID = animalID;
         Weight = weight;
         HealthStatus = healthStatus;
-        Medication = medication;
-        Comments = comments;
         CheckupDate = checkupDate;
     }
 
@@ -41,14 +37,6 @@ public class HealthCheckupModel {
 
     public String getHealthStatus() {
         return HealthStatus;
-    }
-
-    public String getMedication() {
-        return Medication;
-    }
-
-    public String getComments() {
-        return Comments;
     }
 
     public Date getCheckupDate() {

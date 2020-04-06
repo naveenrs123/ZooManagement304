@@ -101,7 +101,7 @@ public class AddFoodDialog extends JFrame {
 
         JLabel prefLabel = createInfoLabel("Food Preferences");
 
-        JPanel speciesPanel = createDropdownInputPanel("Species", this.getNames(Species.class));
+        JPanel speciesPanel = createDropdownInputPanel("Species", dbhandler.getAnimalSpecies());
         JPanel typePanel2 = createTextInputPanel("Food Type");
 
         prefInput.add(prefLabel);
@@ -170,7 +170,7 @@ public class AddFoodDialog extends JFrame {
 
         //Insert preference
         String type2 = textFieldList.get(3).getText().trim();
-        Species s = Species.valueOf((String)comboBoxList.get(0).getSelectedItem());
+        String s = (String)comboBoxList.get(0).getSelectedItem();
 
         //Insert feeding
         String FoodID2 = textFieldList.get(4).getText().trim();

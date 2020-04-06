@@ -1,6 +1,7 @@
 package zoo.ui;
 
 import zoo.database.DatabaseConnectionHandler;
+import zoo.model.HealthCheckupModel;
 import zoo.model.ZooEmployeeModel;
 
 import javax.swing.*;
@@ -9,11 +10,12 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
 import java.util.Vector;
 
 public class HealthCheckupWindow extends JFrame {
 
-    AddHealthCheckup addHealthCheckupDialog;
+    AddHealthCheckupDialog addHealthCheckupDialog;
     DatabaseConnectionHandler dbhandler;
     JScrollPane healthScroll;
     JTable table;
@@ -22,7 +24,7 @@ public class HealthCheckupWindow extends JFrame {
         super("Health Checkups");
         this.dbhandler = dbhandler;
         this.table = new JTable();
-        this.addHealthCheckupDialog = new AddHealthCheckup();
+        this.addHealthCheckupDialog = new AddHealthCheckupDialog(dbhandler, table);
     }
 
 
@@ -49,13 +51,12 @@ public class HealthCheckupWindow extends JFrame {
         healthCheckupButtons.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JButton addCheckup = new JButton("Log Health Checkup");
-        JButton searchCheckups = new JButton("Search");
         JButton resetView = new JButton("Reset View");
 
         addCheckup.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-           //     addEmployeeDialog.showFrame();
+                addHealthCheckupDialog.showFrame();
             }
         });
         resetView.addActionListener(new ActionListener() {
@@ -66,8 +67,6 @@ public class HealthCheckupWindow extends JFrame {
         });
 
         healthCheckupButtons.add(addCheckup);
-        healthCheckupButtons.add(Box.createRigidArea(new Dimension(10, 0)));
-        healthCheckupButtons.add(searchCheckups);
         healthCheckupButtons.add(Box.createRigidArea(new Dimension(10, 0)));
         healthCheckupButtons.add(resetView);
 
@@ -90,29 +89,26 @@ public class HealthCheckupWindow extends JFrame {
             }
         };
         Vector<String> columnNames = new Vector<>();
+        columnNames.add("Checkup ID");
         columnNames.add("Employee ID");
-        columnNames.add("Name");
-        columnNames.add("Start Date");
-        columnNames.add("End Date");
-        columnNames.add("On Duty?");
+        columnNames.add("Animal ID");
+        columnNames.add("Weight");
+        columnNames.add("Health Status");
+        columnNames.add("Checkup Date");
         tableModel.setColumnIdentifiers(columnNames);
 
-        ZooEmployeeModel[] employees = dbhandler.getEmployeeInfo();
-        Vector<String> employeeData;
-        for (ZooEmployeeModel employee: employees) {
-            employeeData = new Vector<>();
-            employeeData.add(employee.getEmployee_ID());
-            employeeData.add(employee.getName());
-            String enddate;
-            if (employee.getEndDate() == null) {
-                enddate = "Currently employed";
-            } else {
-                enddate = employee.getEndDate().toString();
-            }
-            employeeData.add(employee.getStartDate().toString());
-            employeeData.add(enddate);
-            employeeData.add(Character.toString(employee.getOnDuty()));
-            tableModel.addRow(employeeData);
+        HealthCheckupModel[] checkups = dbhandler.getHealthCheckups();
+
+        Vector<String> checkupData;
+        for (HealthCheckupModel checkup: checkups) {
+            checkupData = new Vector<>();
+            checkupData.add(checkup.getCheckupID());
+            checkupData.add(checkup.getEmployeeID());
+            checkupData.add(checkup.getAnimalID());
+            checkupData.add(Integer.toString(checkup.getWeight()));
+            checkupData.add(checkup.getHealthStatus());
+            checkupData.add(checkup.getCheckupDate().toString());
+            tableModel.addRow(checkupData);
         }
         table.setModel(tableModel);
         tableModel.fireTableDataChanged();

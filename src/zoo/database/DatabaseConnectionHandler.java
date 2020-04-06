@@ -1,6 +1,8 @@
 package zoo.database;
 
+import oracle.jdbc.proxy.annotation.Pre;
 import zoo.model.*;
+import zoo.ui.HealthCheckupWindow;
 
 import javax.swing.*;
 import java.sql.*;
@@ -100,6 +102,8 @@ public class DatabaseConnectionHandler {
 
 	public String[] getManageIDs() {return employeeDatabaseHandler.getManagerIDs();}
 
+	public String[] getVetIDs() {return employeeDatabaseHandler.getVetIDs();}
+
 	public String[] getZookeeperIDs() {return employeeDatabaseHandler.getZooKeeperIDs();}
 
 	public void insertVetEmployee(VetEmployeeModel model) {
@@ -193,6 +197,8 @@ public class DatabaseConnectionHandler {
 		animalDatabaseHandler.determinePenAvailability(to_PenNumber, to_AreaID, from_PenNumber, from_AreaID);
 	}
 
+	public int getNextCheckupNumber() {return animalDatabaseHandler.getNextCheckupNumber();}
+
 	public int getNextRelocationNumber() {
 		return animalDatabaseHandler.getNextRelocationNumber();
 	}
@@ -225,11 +231,10 @@ public class DatabaseConnectionHandler {
 		ArrayList<FoodPreferencesModel> result = new ArrayList<FoodPreferencesModel>();
 		try {
 			Statement stmt = connection.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM Animals");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM FOODPREFERENCES");
 			while(rs.next()) {
 				FoodPreferencesModel model = new FoodPreferencesModel
-						(rs.getString("Animal_ID"),
-								Species.valueOf(rs.getString("Species"))
+						(rs.getString("Food_Type"), rs.getString("Species")
 						);
 				result.add(model);
 			}
@@ -312,8 +317,8 @@ public class DatabaseConnectionHandler {
 			ps.setString(2, model.getEmployeeID());
 			ps.setString(3, model.getAnimalID());
 			ps.setInt(4, model.getWeight());
-			ps.setString(4, model.getHealthStatus());
-			ps.setDate(5, model.getCheckupDate());
+			ps.setString(5, model.getHealthStatus());
+			ps.setDate(6, model.getCheckupDate());
 
 			ps.executeUpdate();
 			connection.commit();
@@ -375,9 +380,33 @@ public class DatabaseConnectionHandler {
 			connection.commit();
 			ps.close();
 		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 			rollbackConnection();
 		}
+	}
+
+	public HealthCheckupModel[] getHealthCheckups() {
+		ArrayList<HealthCheckupModel> result = new ArrayList<>();
+		try{
+			PreparedStatement ps = connection.prepareStatement("SELECT * FROM HEALTHCHECKUP");
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				HealthCheckupModel checkup = new HealthCheckupModel(
+						rs.getString("Checkup_ID"),
+						rs.getString("Employee_ID"),
+						rs.getString("Animal_ID"),
+						rs.getInt("Weight"),
+						rs.getString("Health_Status"),
+						rs.getDate("CheckupDate"));
+				result.add(checkup);
+			}
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+			rollbackConnection();
+
+		}
+		return result.toArray(new HealthCheckupModel[result.size()]);
 	}
 
 

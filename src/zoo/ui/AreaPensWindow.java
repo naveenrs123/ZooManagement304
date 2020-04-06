@@ -108,7 +108,6 @@ public class AreaPensWindow extends JFrame {
 
         JButton addPenCleaning = new JButton("Clean a Pen");
         JButton moveAnimal = new JButton("Relocate an Animal");
-        JButton searchAnimals = new JButton("Locate an Animal");
         JButton extractData = new JButton("Get Log Data");
         JButton resetView = new JButton("Reset View");
 
@@ -121,12 +120,6 @@ public class AreaPensWindow extends JFrame {
         moveAnimal.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {relocateAnimalDialog.showFrame();}
-        });
-        searchAnimals.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-
-            }
         });
         extractData.addActionListener(new ActionListener() {
             @Override
@@ -144,8 +137,6 @@ public class AreaPensWindow extends JFrame {
         animalButtons.add(addPenCleaning);
         animalButtons.add(Box.createRigidArea(new Dimension(10, 0)));
         animalButtons.add(moveAnimal);
-        animalButtons.add(Box.createRigidArea(new Dimension(10, 0)));
-        animalButtons.add(searchAnimals);
         animalButtons.add(Box.createRigidArea(new Dimension(10, 0)));
         animalButtons.add(extractData);
         animalButtons.add(Box.createRigidArea(new Dimension(10, 0)));

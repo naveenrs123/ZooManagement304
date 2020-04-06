@@ -85,7 +85,6 @@ public class FoodWindow extends JFrame {
         JButton addfood = new JButton("Add Food/Feeding/Preference");
         JButton updatefood = new JButton("Update Food/Feeding/Preference");
         JButton searchfoods = new JButton("Search");
-        JButton resetView = new JButton("Reset View");
 
         addfood.addActionListener(new ActionListener() {
             @Override
@@ -105,8 +104,7 @@ public class FoodWindow extends JFrame {
         foodButtons.add(updatefood);
         foodButtons.add(Box.createRigidArea(new Dimension(10, 0)));
         foodButtons.add(searchfoods);
-        foodButtons.add(Box.createRigidArea(new Dimension(10, 0)));
-        foodButtons.add(resetView);
+
 
         contentPane.add(titlePane);
         contentPane.add(foodScroll);
@@ -157,15 +155,15 @@ public class FoodWindow extends JFrame {
             }
         };
         Vector<String> columnNames = new Vector<>();
-        columnNames.add("Species");
         columnNames.add("Food Type");
+        columnNames.add("Species");
         tableModel.setColumnIdentifiers(columnNames);
         FoodPreferencesModel[] foods = dbhandler.getFoodPreferences();
         Vector<String> foodData;
         for (FoodPreferencesModel food: foods) {
             foodData = new Vector<>();
             foodData.add(food.getFood_Type());
-            foodData.add(food.getSpecies()+"");
+            foodData.add(food.getSpecies());
             tableModel.addRow(foodData);
         }
         table.setModel(tableModel);
