@@ -126,9 +126,11 @@ public class UpdateEmployeeDialog extends JFrame {
 
         comboBoxList.get(0).addActionListener(e -> {
             Object item = comboBoxList.get(0).getSelectedItem();
-            resetFields();
-            comboBoxList.get(0).setSelectedItem(item);
-            setFields();
+            if (!item.equals("")) {
+                resetFields();
+                comboBoxList.get(0).setSelectedItem(item);
+                setFields();
+            }
         });
 
         JPanel employeeButtons = new JPanel();
