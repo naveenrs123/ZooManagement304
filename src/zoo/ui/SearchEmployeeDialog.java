@@ -56,6 +56,14 @@ public class SearchEmployeeDialog extends JFrame {
      */
     ArrayList<JComboBox<String>> conditionBoxes = new ArrayList<>();
 
+    private void clear() {
+        comboBoxList.clear();
+        datePickers.clear();
+        textFieldList.clear();
+        checkBoxes.clear();
+        conditionBoxes.clear();
+    }
+
     public SearchEmployeeDialog(DatabaseConnectionHandler dbhandler, JTable table) {
         super("Search Employees");
         this.dbhandler = dbhandler;
@@ -172,7 +180,11 @@ public class SearchEmployeeDialog extends JFrame {
         JButton clear = new JButton("Clear Fields");
 
 
-        submit.addActionListener(e -> searchEmployees());
+        submit.addActionListener(e -> {
+            searchEmployees();
+            clear();
+            dispose();
+        });
         clear.addActionListener(e -> resetFields());
 
         employeeButtons.add(advanced);

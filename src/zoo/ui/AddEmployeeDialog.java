@@ -49,6 +49,12 @@ public class AddEmployeeDialog extends JFrame {
         this.table = table;
     }
 
+    private void clear() {
+        textFieldList.clear();
+        comboBoxList.clear();
+        datePickers.clear();
+    }
+
     public void showFrame() {
         JPanel contentPane = new JPanel();
         this.setContentPane(contentPane);
@@ -135,11 +141,10 @@ public class AddEmployeeDialog extends JFrame {
         JButton submit = new JButton("Submit");
         JButton clear = new JButton("Clear Fields");
 
-        submit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                insertEmployee();
-            }
+        submit.addActionListener(e -> {
+            insertEmployee();
+            clear();
+            dispose();
         });
 
         employeeButtons.add(submit);
