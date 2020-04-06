@@ -83,7 +83,7 @@ public class FoodWindow extends JFrame {
         foodButtons.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JButton addfood = new JButton("Add Food/Feeding/Preference");
-        JButton updatefood = new JButton("Update Food/Feeding/Preference");
+        JButton updatefood = new JButton("Update Food Inventory");
         JButton searchfoods = new JButton("Search");
 
         addfood.addActionListener(new ActionListener() {

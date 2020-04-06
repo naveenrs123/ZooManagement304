@@ -14,4 +14,5 @@ public enum Species {
     Koala,
     Flamingo,
     Sea_Sponge,
+    Spider
 }

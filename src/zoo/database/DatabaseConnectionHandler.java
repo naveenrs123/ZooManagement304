@@ -72,7 +72,6 @@ public class DatabaseConnectionHandler {
 		return employeeDatabaseHandler.getOneEmployee(id);
 	}
 	public void updateFood(FoodModel model){foodDatabaseHandler.updateFood(model);}
-	public void updateFeed(FeedingModel model){foodDatabaseHandler.updateFeed(model);}
 	public ZookeeperEmployeeModel getOneZookeeper(String id) {
 		return employeeDatabaseHandler.getOneZookeeper(id);
 	}

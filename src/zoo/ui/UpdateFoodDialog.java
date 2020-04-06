@@ -1,5 +1,6 @@
 package zoo.ui;
 
+
 import org.jdatepicker.DateModel;
 import org.jdatepicker.JDatePicker;
 import org.jdatepicker.UtilCalendarModel;
@@ -29,25 +30,24 @@ public class UpdateFoodDialog extends JFrame {
     DatabaseConnectionHandler dbhandler;
     JTable table;
     /**
-     * 0: Name, 1: Experience, 2: Specialization, 3: Phone Number
-     * 4: Office Number.
+     * 0: Type, 1: Inventory Amount
      */
     ArrayList<JTextField> textFieldList = new ArrayList<>();
 
     /**
-     * 0: Food_ID, 1: On Duty, 2: On Call, 3: Event Duty, 4: In Office
+     * 0: Food ID
      */
     ArrayList<JComboBox> comboBoxList = new ArrayList<>();
-
-    /**
-     * 0: Start Date, 1: End Date
-     */
-    ArrayList<JDatePicker> datePickers = new ArrayList<>();
 
     public UpdateFoodDialog(DatabaseConnectionHandler dbhandler, JTable table) {
         super("Update Food Information");
         this.dbhandler = dbhandler;
         this.table = table;
+    }
+
+    private void clear() {
+        textFieldList.clear();
+        comboBoxList.clear();
     }
 
     public void showFrame() {
@@ -81,30 +81,8 @@ public class UpdateFoodDialog extends JFrame {
         allFoodsInput.add(typePanel);
         allFoodsInput.add(amountPanel);
 
-        JPanel foodInput = new JPanel();
-        foodInput.setLayout(new BoxLayout(foodInput, BoxLayout.PAGE_AXIS));
-        foodInput.setMaximumSize(new Dimension(300, 300));
-        foodInput.setAlignmentY(Component.TOP_ALIGNMENT);
-
-        JLabel feedLabel = createInfoLabel("Feedings");
-        JPanel foodID2Panel = createDropdownInputPanel("Food ID", dbhandler.getfeedFoodIDs());
-        JPanel animalIDPanel = createTextInputPanel("Type");
-        JPanel Employee_IDPanel = createTextInputPanel("Type");
-        JPanel amount2Panel = createTextInputPanel("Amount");
-        JPanel feedDatePanel = createDatepickerInputPanel("Date Of Feeding");;
-
-        foodInput.add(feedLabel);
-        foodInput.add(Box.createRigidArea(new Dimension(0, 20)));
-        foodInput.add(foodID2Panel);
-        foodInput.add(animalIDPanel);
-        foodInput.add(Employee_IDPanel);
-        foodInput.add(amount2Panel);
-        foodInput.add(feedDatePanel);
-
-
         inputsPane.add(Box.createRigidArea(new Dimension(50, 0)));
         inputsPane.add(allFoodsInput);
-        inputsPane.add(foodInput);
 
         comboBoxList.get(0).addActionListener(new ActionListener() {
             @Override
@@ -129,7 +107,10 @@ public class UpdateFoodDialog extends JFrame {
         submit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 updateFood();
+                clear();
+                dispose();
             }
         });
 
@@ -156,9 +137,6 @@ public class UpdateFoodDialog extends JFrame {
         for (JComboBox comboBox : comboBoxList) {
             comboBox.setSelectedIndex(0);
         }
-        for (JDatePicker datePicker : datePickers) {
-            datePicker.getFormattedTextField().setText("");
-        }
     }
 
     private void setFields() {
@@ -166,13 +144,7 @@ public class UpdateFoodDialog extends JFrame {
         FoodModel Food = dbhandler.getOneFood(id1);
 
         textFieldList.get(0).setText(Food.getType());
-        textFieldList.get(1).setText(Food.getInventory_Amount()+"");
-
-        String id2 = (String) comboBoxList.get(1).getSelectedItem();
-        FeedingModel feed2 = dbhandler.getOneFeed(id2);
-        textFieldList.get(2).setText(feed2.getAnimal_ID());
-        textFieldList.get(3).setText(feed2.getAmount()+"");
-        setDate(feed2.getDate_Of_Feeding(),datePickers.get(0));
+        textFieldList.get(1).setText(Integer.toString(Food.getInventory_Amount()));
 
     }
 
@@ -183,34 +155,22 @@ public class UpdateFoodDialog extends JFrame {
         String amt = textFieldList.get(1).getText().trim();
         int foodAmt1 = -1;
         if (!amt.equals("")) {
-            foodAmt1 = Integer.parseInt(amt);
-        }
-
-        //Insert feeding
-        String FoodID2 = (String) comboBoxList.get(1).getSelectedItem();
-        String animalID = textFieldList.get(2).getText().trim();
-        String employeeID = textFieldList.get(3).getText().trim();
-        String amt2 = textFieldList.get(4).getText().trim();
-        Date date = getDate(datePickers.get(0));
-        int foodAmt2 = -1;
-        if (!amt2.equals("")) {
-            foodAmt2 = Integer.parseInt(amt2);
+            try {
+                foodAmt1 = Integer.parseInt(amt);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Invalid amount input");
+                return;
+            }
         }
 
         if (FoodID != "") {
             FoodModel foodModel = new FoodModel(FoodID, type, foodAmt1);
             dbhandler.updateFood(foodModel);
         }
-        else if (FoodID2 != "") {
-            FeedingModel feedinModel = new FeedingModel(FoodID, animalID, employeeID, foodAmt2, date);
-            dbhandler.updateFeed(feedinModel);
-        }
         else {
            //Do nothing
         }
-
         sharedInfo();
-
     }
 
     private JTextPane createInfoPanel() {
@@ -264,44 +224,20 @@ public class UpdateFoodDialog extends JFrame {
         JLabel panelText = new JLabel(labelText);
         panelText.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelText.setBorder(new EmptyBorder(0, 0, 0, 10));
+        JComboBox combobox = new JComboBox();
+        combobox.insertItemAt("", 0);
 
-        JComboBox panelCombo = new JComboBox(choices);
-        panelCombo.setMaximumSize(new Dimension(100, 30));
-        panelCombo.setAlignmentX(Component.LEFT_ALIGNMENT);
+        for (String str: choices) {
+            combobox.addItem(str);
+        }
 
-        panel.add(panelText);
-        panel.add(panelCombo);
-
-        comboBoxList.add(panelCombo);
-        return panel;
-    }
-
-    public JPanel createDatepickerInputPanel(String labelText) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
-        panel.setBorder(new EmptyBorder(0, 0, 10, 0));
-        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        JLabel panelText = new JLabel(labelText);
-        panelText.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panelText.setBorder(new EmptyBorder(0, 0, 0, 10));
-
-        Properties p = new Properties();
-        p.put("text.today", "Today");
-        p.put("text.month", "Month");
-        p.put("text.year", "Year");
-
-        UtilCalendarModel model = new UtilCalendarModel();
-        JDatePicker datePicker = new JDatePicker(model);
-        datePicker.setMaximumSize(new Dimension(150, 30));
-
-        //datePicker.setMaximumSize(new Dimension(100, 16));
-        datePicker.setAlignmentX(Component.LEFT_ALIGNMENT);
+        combobox.setMaximumSize(new Dimension(150, 30));
+        combobox.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         panel.add(panelText);
-        panel.add(datePicker);
+        panel.add(combobox);
 
-        datePickers.add(datePicker);
+        comboBoxList.add(combobox);
         return panel;
     }
 
@@ -311,28 +247,6 @@ public class UpdateFoodDialog extends JFrame {
         label.setBorder(new EmptyBorder(0, 0, 0, 5));
         label.setFont(new Font("Sans Serif", Font.BOLD, 16));
         return label;
-    }
-
-    private void setDate(Date date, JDatePicker datePicker) {
-        if (date != null) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);
-            DateModel<Calendar> dateModel = (DateModel<Calendar>) datePicker.getModel();
-            dateModel.setValue(calendar);
-        }
-    }
-
-    private Date getDate(JDatePicker datePicker) {
-        if (!datePicker.getModel().isSelected()) {
-            return null;
-        }
-        else {
-            int day = datePicker.getModel().getDay();
-            int month = datePicker.getModel().getMonth() + 1;
-            int year = datePicker.getModel().getYear();
-
-            return Date.valueOf(year + "-" + month + "-" + day);
-        }
     }
 
     public void sharedInfo() {

@@ -44,14 +44,14 @@ INSERT INTO PenHabitats VALUES ('C', 1, 'Tundra');
 INSERT INTO PenHabitats VALUES ('D', 8, 'Farm');
 INSERT INTO PenHabitats VALUES ('E', 12, 'Savanna');
 
-INSERT INTO PenInfo VALUES (1, 'B', 1000, 20, TO_DATE('2020-03-19', 'YYYY-MM-DD'));
-INSERT INTO PenInfo VALUES (2, 'A', 2000, 10, TO_DATE('2020-03-18', 'YYYY-MM-DD'));
-INSERT INTO PenInfo VALUES (3, 'C', 2000, 3, TO_DATE('2020-03-24', 'YYYY-MM-DD'));
-INSERT INTO PenInfo VALUES (4, 'D', 1500, 2, TO_DATE('2020-03-25', 'YYYY-MM-DD'));
-INSERT INTO PenInfo VALUES (6, 'E', 4000, 6, TO_DATE('2020-03-27', 'YYYY-MM-DD'));
-INSERT INTO PenInfo VALUES (1, 'E', 2500, 2, TO_DATE('2020-03-20', 'YYYY-MM-DD'));
-INSERT INTO PenInfo VALUES (5, 'E', 3000, 6, TO_DATE('2020-03-26', 'YYYY-MM-DD'));
-INSERT INTO PenInfo VALUES (3, 'E', 800, 10, TO_DATE('2020-03-15', 'YYYY-MM-DD'));
+INSERT INTO PenInfo VALUES (1, 'B', 23, 20, TO_DATE('2020-03-19', 'YYYY-MM-DD'));
+INSERT INTO PenInfo VALUES (2, 'A', 15, 10, TO_DATE('2020-03-18', 'YYYY-MM-DD'));
+INSERT INTO PenInfo VALUES (3, 'C', 10, 3, TO_DATE('2020-03-24', 'YYYY-MM-DD'));
+INSERT INTO PenInfo VALUES (4, 'D', 10, 2, TO_DATE('2020-03-25', 'YYYY-MM-DD'));
+INSERT INTO PenInfo VALUES (6, 'E', 15, 6, TO_DATE('2020-03-27', 'YYYY-MM-DD'));
+INSERT INTO PenInfo VALUES (1, 'E', 16, 2, TO_DATE('2020-03-20', 'YYYY-MM-DD'));
+INSERT INTO PenInfo VALUES (5, 'E', 10, 6, TO_DATE('2020-03-26', 'YYYY-MM-DD'));
+INSERT INTO PenInfo VALUES (3, 'E', 15, 10, TO_DATE('2020-03-15', 'YYYY-MM-DD'));
 
 INSERT INTO PenCleaning VALUES ('E4', 1, 'B', TO_DATE('2020-03-19', 'YYYY-MM-DD'));
 INSERT INTO PenCleaning VALUES ('E3', 2, 'A', TO_DATE('2020-03-18', 'YYYY-MM-DD'));
@@ -67,6 +67,7 @@ INSERT INTO Animals VALUES ('A5', 'Mammal', 'F', 'Polar Bear', 6, 'Bernie', 3, '
 INSERT INTO Animals VALUES ('A6', 'Reptile', 'M', 'Chameleon', 59, 'Leon', 3, 'E');
 INSERT INTO Animals VALUES ('A7', 'Aquatic', 'M', 'Sea Sponge', 2, 'Spongebob', 1, 'B');
 INSERT INTO Animals VALUES ('A8', 'Mammal', 'F', 'Elephant', 4, 'Ellie', 6, 'E');
+INSERT INTO Animals VALUES('A9', 'Invertebrate', 'F', 'Spider', 2, 'Charlotte', 3, 'E');
 
 INSERT INTO HealthCheckup VALUES ('CH1', 'E6', 'A1', 120, 'Great', TO_DATE('2020-02-21', 'YYYY-MM-DD'));
 INSERT INTO HealthCheckup VALUES ('CH2', 'E7', 'A2', 30, 'Good', TO_DATE('2020-02-09', 'YYYY-MM-DD'));
@@ -82,18 +83,18 @@ INSERT INTO AnimalRelocation VALUES ('R5', 'E15', 'A5', 3, 'C', 4, 'D', TO_DATE(
 
 INSERT INTO Food VALUES ('F1', 'Pellets', 1000);
 INSERT INTO Food VALUES ('F2', 'Steak', 90);
-    INSERT INTO Food VALUES ('F3', 'Ferns', 300);
-    INSERT INTO Food VALUES ('F4', 'Carrots', 250);
-    INSERT INTO Food VALUES ('F5', 'Squid', 148);
-    INSERT INTO Food VALUES ('F6', 'Fruit and Seed Mix', 509);
-    INSERT INTO Food VALUES ('F7', 'Dried Insects', 94);
-    INSERT INTO Food VALUES ('F8', 'Liver', 650);
+INSERT INTO Food VALUES ('F3', 'Ferns', 300);
+INSERT INTO Food VALUES ('F4', 'Carrots', 250);
+INSERT INTO Food VALUES ('F5', 'Squid', 148);
+INSERT INTO Food VALUES ('F6', 'Fruit and Seed Mix', 509);
+INSERT INTO Food VALUES ('F7', 'Dried Insects', 94);
+INSERT INTO Food VALUES ('F8', 'Liver', 650);
 
-    INSERT INTO FoodPreferences VALUES ('Giraffe', 'Ferns');
-    INSERT INTO FoodPreferences VALUES ('Parrot', 'Fruit and Seed Mix');
-    INSERT INTO FoodPreferences VALUES ('Lion', 'Steak');
-    INSERT INTO FoodPreferences VALUES ('Polar Bear', 'Liver');
-    INSERT INTO FoodPreferences VALUES ('Chameleon', 'Dried Insects');
+INSERT INTO FoodPreferences VALUES ('Giraffe', 'Ferns');
+INSERT INTO FoodPreferences VALUES ('Parrot', 'Fruit and Seed Mix');
+INSERT INTO FoodPreferences VALUES ('Lion', 'Steak');
+INSERT INTO FoodPreferences VALUES ('Polar Bear', 'Liver');
+INSERT INTO FoodPreferences VALUES ('Chameleon', 'Dried Insects');
 
 INSERT INTO Feeding VALUES ('F3', 'A1', 'E1', 100, TO_TIMESTAMP('2020-03-27 19:33:00', 'YYYY-MM-DD HH24:MI:SS'));
 INSERT INTO Feeding VALUES ('F3', 'A1', 'E2', 50, TO_TIMESTAMP('2020-03-25 19:34:00', 'YYYY-MM-DD HH24:MI:SS'));

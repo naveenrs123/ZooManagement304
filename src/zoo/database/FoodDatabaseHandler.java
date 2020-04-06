@@ -70,9 +70,9 @@ public class FoodDatabaseHandler {
             stmt.setString(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                foodModelX = new FoodModel(rs.getString(1),
+                foodModelX = new FoodModel(rs.getString("Food_ID"),
                         rs.getString("Type"),
-                        rs.getInt("Inventory Amount")
+                        rs.getInt("Inventory_Amount")
                 );
             }
             rs.close();
@@ -128,52 +128,7 @@ public class FoodDatabaseHandler {
             rollbackConnection();
         }
     }
-    public void updateFeed(FeedingModel model){
-        String id = model.getFood_ID();
-        try {
-            if(!model.getAnimal_ID().equals("")) {
-                PreparedStatement pstmt = connection.prepareStatement("UPDATE FEEDING SET ANIMAL_ID = ? WHERE FOOD_ID = ?");
-                pstmt.setString(1, model.getAnimal_ID());
-                pstmt.setString(2, id);
-                pstmt.executeUpdate();
-                connection.commit();
-                pstmt.close();
-            }
 
-            if (!model.getEmployee_ID().equals("")) {
-                PreparedStatement ps = connection.prepareStatement("UPDATE FEEDING SET EMPLOYEE_ID = ? WHERE FOOD_ID = ?");
-                ps.setString(1, model.getAnimal_ID());
-                ps.setString(2, id);
-                ps.executeUpdate();
-                connection.commit();
-                ps.close();
-
-            }
-            if (model.getAmount()!=-1) {
-                PreparedStatement ps = connection.prepareStatement("UPDATE FEEDING SET AMOUNT = ? WHERE FOOD_ID = ?");
-                ps.setInt(1, model.getAmount());
-                ps.setString(2, id);
-                ps.executeUpdate();
-                connection.commit();
-                ps.close();
-
-            }
-            if (model.getDate_Of_Feeding()!=null) {
-                PreparedStatement ps = connection.prepareStatement("UPDATE FEEDING SET DATE_OF_FEEDING= ? WHERE FOOD_ID = ?");
-                ps.setDate(1, model.getDate_Of_Feeding());
-                ps.setString(2, id);
-                ps.executeUpdate();
-                connection.commit();
-                ps.close();
-
-            }
-
-
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-    }
     private void rollbackConnection() {
         try  {
             connection.rollback();
