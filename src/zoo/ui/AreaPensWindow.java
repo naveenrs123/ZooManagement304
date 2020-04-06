@@ -24,6 +24,7 @@ public class AreaPensWindow extends JFrame {
     JScrollPane penAreaScroll;
     AddPenCleaningDialog addPenCleaningDialog;
     RelocateAnimalDialog relocateAnimalDialog;
+    ExtractDataDialog extractDataDialog;
 
     public AreaPensWindow(DatabaseConnectionHandler dbhandler) {
         super("Area and Pens Management");
@@ -31,6 +32,7 @@ public class AreaPensWindow extends JFrame {
         this.table = new JTable();
         this.addPenCleaningDialog = new AddPenCleaningDialog(dbhandler, table);
         this.relocateAnimalDialog = new RelocateAnimalDialog(dbhandler, table);
+        this.extractDataDialog = new ExtractDataDialog(dbhandler);
     }
 
     public void showFrame() {
@@ -106,7 +108,8 @@ public class AreaPensWindow extends JFrame {
 
         JButton addPenCleaning = new JButton("Clean a Pen");
         JButton moveAnimal = new JButton("Relocate an Animal");
-        JButton searchAnimals = new JButton("Search");
+        JButton searchAnimals = new JButton("Locate an Animal");
+        JButton extractData = new JButton("Get Log Data");
         JButton resetView = new JButton("Reset View");
 
         addPenCleaning.addActionListener(new ActionListener() {
@@ -119,12 +122,32 @@ public class AreaPensWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {relocateAnimalDialog.showFrame();}
         });
+        searchAnimals.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+
+            }
+        });
+        extractData.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                extractDataDialog.showFrame();
+            }
+        });
+        resetView.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                sharedInfo();
+            }
+        });
 
         animalButtons.add(addPenCleaning);
         animalButtons.add(Box.createRigidArea(new Dimension(10, 0)));
         animalButtons.add(moveAnimal);
         animalButtons.add(Box.createRigidArea(new Dimension(10, 0)));
         animalButtons.add(searchAnimals);
+        animalButtons.add(Box.createRigidArea(new Dimension(10, 0)));
+        animalButtons.add(extractData);
         animalButtons.add(Box.createRigidArea(new Dimension(10, 0)));
         animalButtons.add(resetView);
 

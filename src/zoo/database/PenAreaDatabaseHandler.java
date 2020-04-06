@@ -1,6 +1,7 @@
 package zoo.database;
 
 import zoo.model.AnimalModel;
+import zoo.model.AnimalRelocationModel;
 import zoo.model.PenCleaningModel;
 import zoo.model.PenInfoModel;
 
@@ -149,9 +150,61 @@ public class PenAreaDatabaseHandler {
 
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
-
+            rollbackConnection();
         }
         return result.toArray(new PenInfoModel[result.size()]);
+    }
+
+    public PenCleaningModel[] getPenCleaningsFromTo(Date from, Date to) {
+        ArrayList<PenCleaningModel> result = new ArrayList<>();
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM PENCLEANING WHERE DATE_OF_CLEANING >= ? AND DATE_OF_CLEANING <= ?");
+            ps.setDate(1, from);
+            ps.setDate(2, to);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()) {
+                PenCleaningModel model = new PenCleaningModel(
+                        rs.getString("Employee_ID"),
+                        rs.getInt("Pen_Number"),
+                        rs.getString("Area_ID").charAt(0),
+                        rs.getDate("Date_of_cleaning")
+                );
+                result.add(model);
+            }
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            rollbackConnection();
+        }
+        return result.toArray(new PenCleaningModel[result.size()]);
+    }
+
+    public AnimalRelocationModel[] getAnimalRelocationsFromTo(Date from, Date to) {
+        ArrayList<AnimalRelocationModel> result = new ArrayList<>();
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM ANIMALRELOCATION WHERE RELOCATIONDATE >= ? AND RELOCATIONDATE <= ?");
+            ps.setDate(1, from);
+            ps.setDate(2, to);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()) {
+                AnimalRelocationModel model = new AnimalRelocationModel(
+                        rs.getString("Relocation_ID"),
+                        rs.getString("Employee_ID"),
+                        rs.getString("Animal_ID"),
+                        Integer.toString(rs.getInt("from_Pen_ID")),
+                        rs.getString("from_Area_ID"),
+                        Integer.toString(rs.getInt("to_Pen_ID")),
+                        rs.getString("to_Area_ID"),
+                        rs.getDate("RelocationDate")
+                );
+                result.add(model);
+            }
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            rollbackConnection();
+        }
+        return result.toArray(new AnimalRelocationModel[result.size()]);
     }
 
     private void rollbackConnection() {

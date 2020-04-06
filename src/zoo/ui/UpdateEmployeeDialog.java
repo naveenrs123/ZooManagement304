@@ -17,6 +17,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Date;
 import java.util.*;
 
@@ -43,6 +45,12 @@ public class UpdateEmployeeDialog extends JFrame {
         super("Update Employee Information");
         this.dbhandler = dbhandler;
         this.table = table;
+    }
+
+    private void clear() {
+        comboBoxList.clear();
+        datePickers.clear();
+        textFieldList.clear();
     }
 
     public void showFrame() {
@@ -143,7 +151,14 @@ public class UpdateEmployeeDialog extends JFrame {
         employeeButtons.add(Box.createRigidArea(new Dimension(10, 0)));
         employeeButtons.add(clear);
 
-        submit.addActionListener(e -> updateEmployee());
+        submit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                updateEmployee();
+                clear();
+                dispose();
+            }
+        });
 
         clear.addActionListener(e -> resetFields());
 
