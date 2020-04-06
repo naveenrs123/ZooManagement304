@@ -40,7 +40,10 @@ public class AdvancedEmployeeDialog extends JFrame {
         query1.setMaximumSize(new Dimension(350, 50));
         query1.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        query1.addActionListener(e -> displaySelectQuery(dbhandler.getExperiencedOnCallVet()));
+        query1.addActionListener(e -> {
+            displaySelectQuery(dbhandler.getExperiencedOnCallVet());
+            dispose();
+        });
 
         JPanel query2Panel = new JPanel();
         query2Panel.setMaximumSize(new Dimension(350, 80));
@@ -56,6 +59,7 @@ public class AdvancedEmployeeDialog extends JFrame {
         JComboBox areaID = new JComboBox<>(dbhandler.getAreaIDs());
         query2.addActionListener(e -> {
             displaySelectQuery(dbhandler.getZookeepersWhoCleanedAllPens((char) areaID.getSelectedItem()));
+            dispose();
         });
 
         query2LabelPanel.add(areaLabel);

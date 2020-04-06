@@ -40,6 +40,12 @@ public class AddAnimalDialog extends JFrame{
      */
     ArrayList<JDatePicker> datePickers = new ArrayList<>();
 
+    private void clear() {
+        comboBoxList.clear();
+        datePickers.clear();
+        textFieldList.clear();
+    }
+
     public AddAnimalDialog(DatabaseConnectionHandler dbhandler, JTable table) {
         super("Add Animal");
         this.dbhandler = dbhandler;
@@ -113,6 +119,8 @@ public class AddAnimalDialog extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 insertAnimal();
+                clear();
+                dispose();
             }
         });
 
